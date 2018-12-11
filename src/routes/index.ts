@@ -8,25 +8,50 @@ export class Index {
     public routes(app): void {
         app.route('/')
         .get((req: Request, res: Response) => {
-            res.status(200).send("Hello world");
+            res.status(200).send(`
+            <html>
+              <h1>DDW API</h1>
+              <h2>Endpoints</h2>
+              <ul>
+                <li><a href="/all_tables">/all_tables</a></li>
+                <li>/single_table</li>
+              </ul>
+              <h2>Parameters for /single_table</h2>
+              <ul>
+                <li><b>schema</b>: ?schema=data_series</li>
+                <li><b>indicator</b>: ?indicator=population_total</li>
+                <li><b>entities</b>: ?entities=UG,KE,NA</li>
+                <li><b>start_year</b>: ?start_year=2000</li>
+                <li><b>end_year</b>: ?end_year=2001</li>
+                <li><b>limit</b>: ?limit=100</li>
+                <li><b>offset</b>: ?offset=200</li>
+              </ul>
+              <h2>Example query</h2>
+              <p><a href="/single_table?schema=fact&indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0">/single_table?schema=fact&indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0</a></p>
+            </html>
+            `);
         })
         app.route('/single_table')
         .get((req: Request, res: Response) => {
             this.dbConn.connect(req.query.schema);
-            this.dbConn.single_table(
-              req.query.indicator,
-              req.query.countries,
-              req.query.start_year,
-              req.query.end_year,
-              req.query.limit,
-              req.query.offset
-            )
-              .then((data) => {
-                res.status(200).send(data);
+            this.dbConn.column_names(req.query.indicator)
+              .then((c_names) => {
+                let table_keys = Object.keys(c_names[0]);
+                this.dbConn.single_table(
+                  table_keys,
+                  req.query.indicator,
+                  req.query.entities,
+                  req.query.start_year,
+                  req.query.end_year,
+                  req.query.limit,
+                  req.query.offset
+                )
+                .then((data) => {
+                  res.status(200).send(data);
+                })
               }).catch((error) => {
                 res.status(500).send(error);
               });
-            this.dbConn.disconnect();
         })
         app.route('/all_tables')
         .get((req: Request, res: Response) => {
@@ -37,7 +62,6 @@ export class Index {
               }).catch((error) => {
                 res.status(500).send(error);
               });
-            this.dbConn.disconnect();
         })
     }
 }
