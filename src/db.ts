@@ -1,6 +1,8 @@
 import * as fs from 'fs';
 import {IMain, IDatabase} from "pg-promise";
 import * as pgPromise from "pg-promise";
+import * as convert from "xml-js";
+import * as json2csv from "json2csv";
 
 export class DB {
     pgp: IMain;
@@ -47,5 +49,16 @@ export class DB {
     }
     public all_tables(schema?): Promise<any>{
       return this.db.any("SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema') ORDER BY table_schema, table_name")
+    }
+    public format_data(data, format = "json"): string{
+        if(format=="xml"){
+          let options = {compact: true, ignoreComment: true}
+          let data_obj = JSON.stringify({"record":data})
+          return "<dataset>"+convert.json2xml(data_obj, options)+"</dataset>"
+        }else if(format=="csv"){
+          const csv = json2csv.parse(data);
+          return csv;
+        }
+        return JSON.stringify(data)
     }
 }

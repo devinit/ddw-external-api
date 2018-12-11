@@ -25,9 +25,10 @@ export class Index {
                 <li><b>end_year</b>: ?end_year=2001</li>
                 <li><b>limit</b>: ?limit=100</li>
                 <li><b>offset</b>: ?offset=200</li>
+                <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
               </ul>
               <h2>Example query</h2>
-              <p><a href="/single_table?schema=fact&indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0">/single_table?schema=fact&indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0</a></p>
+              <p><a href="/single_table?schema=fact&indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">/single_table?schema=fact&indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml</a></p>
             </html>
             `);
         })
@@ -47,7 +48,8 @@ export class Index {
                   req.query.offset
                 )
                 .then((data) => {
-                  res.status(200).send(data);
+                  res.setHeader('Content-Type', 'application/'+req.query.format)
+                  res.status(200).send(this.dbConn.format_data(data, req.query.format));
                 })
               }).catch((error) => {
                 res.status(500).send(error);
@@ -58,7 +60,8 @@ export class Index {
             this.dbConn.connect();
             this.dbConn.all_tables()
               .then((data) => {
-                res.status(200).send(data);
+                res.setHeader('Content-Type', 'application/'+req.query.format)
+                res.status(200).send(this.dbConn.format_data(data, req.query.format));
               }).catch((error) => {
                 res.status(500).send(error);
               });

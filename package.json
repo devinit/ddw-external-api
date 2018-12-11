@@ -23,6 +23,8 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "pg-promise": "^8.5.3"
+    "json2csv": "^4.3.2",
+    "pg-promise": "^8.5.3",
+    "xml-js": "^1.6.8"
   }
 }
