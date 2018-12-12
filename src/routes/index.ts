@@ -18,7 +18,6 @@ export class Index {
               </ul>
               <h2>Parameters for /single_table</h2>
               <ul>
-                <li><b>schema</b>: ?schema=data_series</li>
                 <li><b>indicator</b>: ?indicator=population_total</li>
                 <li><b>entities</b>: ?entities=UG,KE,NA</li>
                 <li><b>start_year</b>: ?start_year=2000</li>
@@ -28,13 +27,12 @@ export class Index {
                 <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
               </ul>
               <h2>Example query</h2>
-              <p><a href="/single_table?schema=fact&indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">/single_table?schema=fact&indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml</a></p>
+              <p><a href="/single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">/single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml</a></p>
             </html>
             `);
         })
         app.route('/single_table')
         .get((req: Request, res: Response) => {
-            this.dbConn.connect(req.query.schema);
             this.dbConn.column_names(req.query.indicator)
               .then((c_names) => {
                 let table_keys = Object.keys(c_names[0]);
@@ -48,6 +46,8 @@ export class Index {
                   req.query.offset
                 )
                 .then((data) => {
+                  let file_extension = req.query.format?req.query.format:"json"
+                  res.setHeader('Content-disposition', 'attachment; filename='+req.query.indicator+'.'+file_extension);
                   res.setHeader('Content-Type', 'application/'+req.query.format)
                   res.status(200).send(this.dbConn.format_data(data, req.query.format));
                 })
@@ -57,9 +57,10 @@ export class Index {
         })
         app.route('/all_tables')
         .get((req: Request, res: Response) => {
-            this.dbConn.connect();
             this.dbConn.all_tables()
               .then((data) => {
+                let file_extension = req.query.format?req.query.format:"json"
+                res.setHeader('Content-disposition', 'attachment; filename=all_tables'+'.'+file_extension);
                 res.setHeader('Content-Type', 'application/'+req.query.format)
                 res.status(200).send(this.dbConn.format_data(data, req.query.format));
               }).catch((error) => {

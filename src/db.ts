@@ -10,12 +10,7 @@ export class DB {
     db: IDatabase<any>;
     constructor() {
         this.cn = fs.readFileSync("src/db.conf", "utf8").trim();
-    }
-    public connect(new_schema?): void {
-        if(this.pgp != null){
-          this.pgp.end()
-        }
-        this.pgp = pgPromise({schema: new_schema});
+        this.pgp = pgPromise();
         this.db = this.pgp(this.cn);
     }
     public column_names(indicator): Promise<any> {
@@ -57,7 +52,7 @@ export class DB {
         }
 
     }
-    public all_tables(schema?): Promise<any>{
+    public all_tables(): Promise<any>{
       return this.db.any("SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema') ORDER BY table_schema, table_name")
     }
     public format_data(data, format = "json"): string{
