@@ -33,27 +33,33 @@ export class Index {
         })
         app.route('/single_table')
         .get((req: Request, res: Response) => {
-            this.dbConn.column_names(req.query.indicator)
-              .then((c_names) => {
-                let table_keys = Object.keys(c_names[0]);
-                this.dbConn.single_table(
-                  table_keys,
-                  req.query.indicator,
-                  req.query.entities,
-                  req.query.start_year,
-                  req.query.end_year,
-                  req.query.limit,
-                  req.query.offset
-                )
-                .then((data) => {
-                  let file_extension = req.query.format?req.query.format:"json"
-                  res.setHeader('Content-disposition', 'inline; filename='+req.query.indicator+'.'+file_extension);
-                  res.setHeader('Content-Type', 'application/'+req.query.format)
-                  res.status(200).send(this.dbConn.format_data(data, req.query.format));
-                })
-              }).catch((error) => {
-                res.status(500).send(error);
-              });
+            if(this.dbConn.forbidden_tables.indexOf(req.query.indicator) > -1){
+              res.status(403).send("Access is forbidden.")
+            }else{
+              this.dbConn.column_names(req.query.indicator)
+                .then((c_names) => {
+                  let table_keys = Object.keys(c_names[0]);
+                  this.dbConn.single_table(
+                    table_keys,
+                    req.query.indicator,
+                    req.query.entities,
+                    req.query.start_year,
+                    req.query.end_year,
+                    req.query.limit,
+                    req.query.offset
+                  )
+                  .then((data) => {
+                    let file_extension = req.query.format?req.query.format:"json"
+                    res.setHeader('Content-disposition', 'inline; filename='+req.query.indicator+'.'+file_extension);
+                    res.setHeader('Content-Type', 'application/'+req.query.format)
+                    res.status(200).send(this.dbConn.format_data(data, req.query.format));
+                  }).catch((error) => {
+                    res.status(500).send(error);
+                  });
+                }).catch((error) => {
+                  res.status(500).send(error);
+                });
+            }
         })
         app.route('/all_tables')
         .get((req: Request, res: Response) => {
