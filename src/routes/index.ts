@@ -47,7 +47,7 @@ export class Index {
                 )
                 .then((data) => {
                   let file_extension = req.query.format?req.query.format:"json"
-                  res.setHeader('Content-disposition', 'attachment; filename='+req.query.indicator+'.'+file_extension);
+                  res.setHeader('Content-disposition', 'inline; filename='+req.query.indicator+'.'+file_extension);
                   res.setHeader('Content-Type', 'application/'+req.query.format)
                   res.status(200).send(this.dbConn.format_data(data, req.query.format));
                 })
@@ -60,7 +60,7 @@ export class Index {
             this.dbConn.all_tables()
               .then((data) => {
                 let file_extension = req.query.format?req.query.format:"json"
-                res.setHeader('Content-disposition', 'attachment; filename=all_tables'+'.'+file_extension);
+                res.setHeader('Content-disposition', 'inline; filename=all_tables'+'.'+file_extension);
                 res.setHeader('Content-Type', 'application/'+req.query.format)
                 res.status(200).send(this.dbConn.format_data(data, req.query.format));
               }).catch((error) => {
