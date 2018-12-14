@@ -230,10 +230,19 @@ export class DB {
           }
           return this.db.any("SELECT $1~.*, $5~.name FROM $1~ LEFT JOIN $5~ ON $1~.$2~ = $5~.id WHERE ORDER BY $2~ ASC LIMIT $3 OFFSET $4;", [indicator, entity_name, limit, offset, entity_table])
         }
-
+    }
+    public multi_table(column_names, indicators, entities?, start_year = "2000", end_year = "2015", limit = "1000000", offset = "0"): Promise<any>{
+      let promise_arr = [];
+      for(let indicator of indicators){
+        promise_arr.push(this.single_table(column_names, indicator, entities, start_year, end_year, limit, offset));
+      }
+      return Promise.all(promise_arr);
     }
     public all_tables(): Promise<any>{
       return this.db.any("SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema') ORDER BY table_schema, table_name")
+    }
+    public meta_data(): Promise<any>{
+      return this.db.any("SELECT * FROM public.di_concept_in_dh;")
     }
     public format_data(data, format = "json"): string{
         if(format=="xml"){
