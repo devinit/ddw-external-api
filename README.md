@@ -44,4 +44,4 @@ Base URL: - http://212.111.41.68:8000/
 ### Data Hub
 This section documents how to retrieve data from the API partaining to common Data Hub (DDH) visualisations
 
-- [Global Picture](docs/global-picture)
+- [Global Picture](docs/global-picture.md)
