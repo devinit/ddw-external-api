@@ -30,3 +30,16 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Households using candles for lighting (%)|uganda_energy_lighting_candles|
 |Households using a paraffin tadooba for lighting (%)|uganda_energy_lighting_paraffin_tadooba|
 |Households using firewood for lighting (%)|uganda_energy_lighting_firewood|
+
+### Population
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|Total population|uganda_total_pop|
+|Population density (per sq km)|uganda_pop_dens|
+|Annual population growth rate|uganda_pop_growthrate|
+|Average household size|uganda_avg_house_size|
+|Average dependency ratio|uganda_dependency_ratio|
+|Urban population (%)|uganda_urban_pop|
+|Sex ratio|uganda_pop_sex_ratio|
+|Number of households|uganda_household_number|
