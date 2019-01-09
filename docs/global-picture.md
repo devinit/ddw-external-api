@@ -34,3 +34,9 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Indicator|Indicator ID|
 |------------------|----------------------|
 |Fragile states|fragile_states|
+|Climate vulnerability|climate_vulnerability|
+|Human hazard and exposure score|human_hazard|
+|Natural hazard and exposure score|natural_hazard|
+|Number of UN-coordinated appeals|number_of_un_appeals|
+|Number of appearances on ECHO's Forgotten Crisis Assessment index|forgotten_crisis|
+|Number of people displaced due to human hazards by hosting country|displacement|
