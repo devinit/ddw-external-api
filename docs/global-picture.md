@@ -40,3 +40,14 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Number of UN-coordinated appeals|number_of_un_appeals|
 |Number of appearances on ECHO's Forgotten Crisis Assessment index|forgotten_crisis|
 |Number of people displaced due to human hazards by hosting country|displacement|
+
+### Government finance
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|Government revenue per person (excluding grants), 2011 PPP$|non_grant_revenue_ppp_pc|
+|Government revenue per person (including grants), 2011 PPP$|total_revenue_ppp_pc|
+|Government revenue (excluding grants), % of GDP|govt_revenue_pc_gdp|
+|Government revenue (including grants), % of GDP|total_revenue_percent_gdp|
+|Grants, % of government revenue|grants_percent_total_revenue|
+|Government spending per person, 2011 PPP$|govt_spend_pc|
