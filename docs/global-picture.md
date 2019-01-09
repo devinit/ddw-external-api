@@ -94,3 +94,12 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Denmark, DANIDA and Foreign Affairs planned budgets, US$|iati_budgets_dk|
 |Netherlands, Foreign Affairs planned budgets, US$|iati_budgets_nl|
 |Belgian Development Cooperation planned budgets, US$|iati_budgets_be|
+
+### Funding to pneumonia
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|ODA to pneumonia received, US$|oda_to_pneumonia|
+|ODA to pneumonia received, % of health ODA|oda_to_pneumonia_percent_health|
+|Private Development Assistance to Pneumonia received, US$|pda_to_pneumonia|
+|Funding proceeds to Gavi, the Vaccine Alliance, US$|funding_to_gavi|
