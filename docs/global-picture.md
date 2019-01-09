@@ -64,3 +64,9 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |% of people in the P20|percent_in_p20_national|
 |% of people in the P20 (subnational level)|Data not fetched from API|
 |% of people in the P20 (survey level)|Data not fetched from API|
+
+### Humanitarian finance
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|Humanitarian assistance, US$|in_ha|
