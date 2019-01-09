@@ -70,3 +70,17 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Indicator|Indicator ID|
 |------------------|----------------------|
 |Humanitarian assistance, US$|in_ha|
+
+### Data revolution
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|Latest (planned) population census|latest_census|
+|Latest (planned) household survey|latest_hh_survey|
+|Number of poverty surveys in past 10 years|number_of_surveys|
+|Latest (planned) agricultural census|agricultural_census|
+|Vital statistics from civil registration (births)|civil_reg_births|
+|Vital statistics from civil registration (deaths)|civil_reg_deaths|
+|Health management information system|health_mis|
+|Education management information system|educ_mis|
+|Statistical capacity|stat_capacity|
