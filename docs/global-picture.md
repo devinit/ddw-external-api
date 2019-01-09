@@ -84,3 +84,13 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Health management information system|health_mis|
 |Education management information system|educ_mis|
 |Statistical capacity|stat_capacity|
+
+### Forward looking ODA
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|UK, DFID planned budgets, US$|iati_budgets_gb|
+|Canada, Global Affairs planned budgets, US$|iati_budgets_ca|
+|Denmark, DANIDA and Foreign Affairs planned budgets, US$|iati_budgets_dk|
+|Netherlands, Foreign Affairs planned budgets, US$|iati_budgets_nl|
+|Belgian Development Cooperation planned budgets, US$|iati_budgets_be|
