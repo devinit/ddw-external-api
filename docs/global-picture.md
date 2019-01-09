@@ -51,3 +51,16 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Government revenue (including grants), % of GDP|total_revenue_percent_gdp|
 |Grants, % of government revenue|grants_percent_total_revenue|
 |Government spending per person, 2011 PPP$|govt_spend_pc|
+
+### Poverty
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|Number of people living in extreme poverty|poor_people_190|
+|% of population living in extreme poverty|poverty_190|
+|Depth of extreme poverty (poverty gap)|depth_of_extreme_poverty_190|
+|% of population living on less than $3.10 a day|poverty_310|
+|Number of people in the P20|2013_p20_population|
+|% of people in the P20|percent_in_p20_national|
+|% of people in the P20 (subnational level)|Data not fetched from API|
+|% of people in the P20 (survey level)|Data not fetched from API|
