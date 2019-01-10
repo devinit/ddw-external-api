@@ -193,10 +193,16 @@ export class DB {
           "pg_views"
         ]
     }
-    public column_names(indicator): Promise<any> {
+    public column_names(indicator, table_schema?): Promise<any> {
+      if(table_schema != null){
+        this.db.query('SET search_path TO $1;', table_schema)
+      }
       return this.db.any("SELECT * FROM $1~ LIMIT 1;", indicator)
     }
-    public single_table(column_names, indicator, entities?, start_year = "2000", end_year = "2015", limit = "1000000", offset = "0"): Promise<any>{
+    public single_table(column_names, indicator, table_schema?, entities?, start_year = "2000", end_year = "2015", limit = "1000000", offset = "0"): Promise<any>{
+        if(table_schema != null){
+          this.db.query('SET search_path TO $1;', table_schema)
+        }
         let entity_name = "di_id"
         let entity_table = "di_entity"
         if(column_names.includes("di_id")){
@@ -231,10 +237,10 @@ export class DB {
           return this.db.any("SELECT $1~.*, $5~.name FROM $1~ LEFT JOIN $5~ ON $1~.$2~ = $5~.id WHERE ORDER BY $2~ ASC LIMIT $3 OFFSET $4;", [indicator, entity_name, limit, offset, entity_table])
         }
     }
-    public multi_table(column_names, indicators, entities?, start_year = "2000", end_year = "2015", limit = "1000000", offset = "0"): Promise<any>{
+    public multi_table(column_names, indicators, table_schema?, entities?, start_year = "2000", end_year = "2015", limit = "1000000", offset = "0"): Promise<any>{
       let promise_arr = [];
       for(let indicator of indicators){
-        promise_arr.push(this.single_table(column_names, indicator, entities, start_year, end_year, limit, offset));
+        promise_arr.push(this.single_table(column_names, indicator, table_schema, entities, start_year, end_year, limit, offset));
       }
       return Promise.all(promise_arr);
     }

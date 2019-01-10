@@ -21,6 +21,7 @@ export class Index {
               <h2>Parameters for /single_table</h2>
               <ul>
                 <li><b>indicator</b>: ?indicator=population_total</li>
+                <li><b>schema</b>: ?schema=fact</li>
                 <li><b>entities</b>: ?entities=UG,KE,NA</li>
                 <li><b>start_year</b>: ?start_year=2000</li>
                 <li><b>end_year</b>: ?end_year=2001</li>
@@ -29,11 +30,12 @@ export class Index {
                 <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
               </ul>
               <h3>Example query</h3>
-              <p><a href="/single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">/single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml</a></p>
+              <p><a href="/single_table?indicator=population_total&schema=fact&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">/single_table?indicator=population_total&schema=fact&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml</a></p>
 
               <h2>Parameters for /multi_table</h2>
               <ul>
                 <li><b>indicators</b>: ?indicators=population_total,govt_revenue_pc_gdp</li>
+                <li><b>schema</b>: ?schema=fact</li>
                 <li><b>entities</b>: ?entities=UG,KE,NA</li>
                 <li><b>start_year</b>: ?start_year=2000</li>
                 <li><b>end_year</b>: ?end_year=2001</li>
@@ -42,7 +44,7 @@ export class Index {
                 <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
               </ul>
               <h3>Example query</h3>
-              <p><a href="/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&format=xml">/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&format=xml</a></p>
+              <p><a href="/multi_table?indicators=population_total,govt_revenue_pc_gdp&schema=fact&entities=UG&start_year=2015&format=xml">/multi_table?indicators=population_total,govt_revenue_pc_gdp&schema=fact&entities=UG&start_year=2015&format=xml</a></p>
 
             </html>
             `);
@@ -52,12 +54,13 @@ export class Index {
             if(this.dbConn.forbidden_tables.indexOf(req.query.indicator) > -1){
               res.status(403).send("Access is forbidden.")
             }else{
-              this.dbConn.column_names(req.query.indicator)
+              this.dbConn.column_names(req.query.indicator, req.query.schema)
                 .then((c_names) => {
                   let table_keys = Object.keys(c_names[0]);
                   this.dbConn.single_table(
                     table_keys,
                     req.query.indicator,
+                    req.query.schema,
                     req.query.entities,
                     req.query.start_year,
                     req.query.end_year,
@@ -89,6 +92,7 @@ export class Index {
                 this.dbConn.multi_table(
                   table_keys,
                   valid_indicators,
+                  req.query.schema,
                   req.query.entities,
                   req.query.start_year,
                   req.query.end_year,
