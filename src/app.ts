@@ -11,6 +11,7 @@ class App {
     constructor() {
         const ddos = new Ddos();
         this.app = express();
+        this.app.use(express.static('public'))
         this.app.use(ddos.express)
         this.config();
         this.indexRoutes.routes(this.app);
