@@ -100,3 +100,13 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Equality in improved water access, rural|uganda_water_equity_rural|
 |Functioning water source committees (%)|uganda_water_source_comm_func|
 |Gender equality WSC|uganda_water_women_position|
+
+### District public resources
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|Agriculture allocation as a % of total expenditure|uganda_agri_percent|
+|Education allocation as a % of total expenditure|uganda_educ_percent|
+|Health allocation as a % of total expenditure|uganda_health_percent|
+|Locally raised revenues|uganda_local_percent|
+|Donor funds|uganda_donor_percent|
