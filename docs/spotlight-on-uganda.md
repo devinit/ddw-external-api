@@ -43,3 +43,34 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Urban population (%)|uganda_urban_pop|
 |Sex ratio|uganda_pop_sex_ratio|
 |Number of households|uganda_household_number|
+
+### Education
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|Primary leaving exam performance index|uganda_leaving_exam_perf_rate|
+|Primary net enrolment rate|uganda_primary_enrol|
+|Primary pupil to classroom ratio (all schools)|uganda_primary_pupil_classroom_ratio|
+|Primary pupil to classroom ratio (government schools)|uganda_primary_pupil_classroom_ratio_gov|
+|Primary pupil to classroom ratio (private schools)|uganda_primary_pupil_classroom_ratio_priv|
+|Primary pupil to teacher ratio (all schools)|uganda_primary_stu_teach_ratio|
+|Primary pupil to teacher ratio (government schools)|uganda_primary_stu_teach_ratio_gov|
+|Primary pupil to teacher ratio (private schools)|uganda_primary_stu_teach_ratio_priv|
+|Primary pupil to toilet stance ratio (all schools)|uganda_primary_pupil_stance_ratio|
+|Primary pupil to toilet stance ratio (government schools)|uganda_primary_pupil_stance_ratio_gov|
+|Primary pupil to toilet stance ratio (private schools)|uganda_primary_pupil_stance_ratio_priv|
+|Primary pupils with adequate sitting and writing space (all schools, %)|uganda_primary_sit_write|
+|Primary pupils with adequate sitting and writing space (government schools, %)|uganda_primary_sit_write_gov|
+|Primary education spending per child|uganda_primary_educ_funding|
+|Primary education donor spending per child|uganda_donor_educ_spend|
+|Secondary net enrolment rate|uganda_secondary_enrol|
+|Secondary students with adequate sitting and writing space (government schools)|uganda_secondary_sit_write_gov|
+|Secondary students with adequate sitting and writing space (total)|uganda_secondary_sit_write|
+|Secondary students-teacher ratio (government schools)|uganda_secondary_stu_teach_ratio_gov|
+|Secondary students-teacher ratio (total)|uganda_secondary_stu_teach_ratio|
+|Secondary student classroom ratio (all schools)|uganda_secondary_stu_classroom_ratio|
+|Secondary student classroom ratio (government schools)|uganda_secondary_stu_classroom_ratio_gov|
+|Secondary student classroom ratio (private schools)|uganda_secondary_stu_classroom_ratio_priv|
+|Secondary student stance ratio (all schools)|uganda_secondary_stu_stance_ratio|
+|Secondary student stance ratio (government schools)|uganda_secondary_stu_stance_ratio_gov|
+|Secondary student stance ratio (private schools)|uganda_secondary_stu_stance_ratio_priv|
