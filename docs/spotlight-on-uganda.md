@@ -87,3 +87,16 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Approved posts that are filled (%)|uganda_health_posts|
 |HMIS reporting score|uganda_hmis|
 |Primary health spending per person|uganda_health_funding|
+
+### Water and sanitation
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|District WASH performance score|uganda_wash_perf_score|
+|Household water coverage (%)|uganda_household_water_coverage|
+|Household sanitation coverage (%)|uganda_household_san_cov|
+|Rural access to safe water (%)|uganda_rural_safe_water|
+|Rural water source functionality (%)|uganda_rural_water_func|
+|Equality in improved water access, rural|uganda_water_equity_rural|
+|Functioning water source committees (%)|uganda_water_source_comm_func|
+|Gender equality WSC|uganda_water_women_position|
