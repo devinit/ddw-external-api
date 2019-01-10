@@ -46,3 +46,4 @@ This section documents how to retrieve data from the API partaining to common Da
 
 - [Global Picture](docs/global-picture.md)
 - [Spotlight on Uganda](docs/spotlight-on-uganda.md)
+- [Spotlight on Kenya](docs/spotlight-on-kenya.md)
