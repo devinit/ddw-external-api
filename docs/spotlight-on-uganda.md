@@ -74,3 +74,16 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Secondary student stance ratio (all schools)|uganda_secondary_stu_stance_ratio|
 |Secondary student stance ratio (government schools)|uganda_secondary_stu_stance_ratio_gov|
 |Secondary student stance ratio (private schools)|uganda_secondary_stu_stance_ratio_priv|
+
+### Health
+
+|Indicator|Indicator ID|
+|------------------|----------------------|
+|District league table overall score|uganda_overall_health|
+|Tuberculosis treatment success rate|uganda_tb_success|
+|Diphtheria treatment coverage rate|uganda_dpt3_coverage|
+|Tetanus vaccine coverage rate|uganda_ipt2_coverage|
+|Antenatal care coverage rate|uganda_anc4_coverage|
+|Approved posts that are filled (%)|uganda_health_posts|
+|HMIS reporting score|uganda_hmis|
+|Primary health spending per person|uganda_health_funding|
