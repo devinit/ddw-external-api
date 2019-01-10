@@ -50,7 +50,13 @@ export class Index {
         app.route('/single_table')
         .get((req: Request, res: Response) => {
             if(this.dbConn.forbidden_tables.indexOf(req.query.indicator) > -1){
-              res.status(403).send("Access is forbidden.")
+              if(req.query.format=="xml"){
+                res.setHeader('Content-Type', 'application/xml')
+              }
+              if(req.query.format=="json" || req.query.format==null){
+                res.setHeader('Content-Type', 'application/json')
+              }
+              res.status(403).send(this.dbConn.format_error({"code":"403"}, req.query.format))
             }else{
               this.dbConn.column_names(req.query.indicator)
                 .then((c_names) => {
@@ -70,10 +76,22 @@ export class Index {
                     res.setHeader('Content-Type', 'application/'+req.query.format)
                     res.status(200).send(this.dbConn.format_data(data, req.query.format));
                   }).catch((error) => {
-                    res.status(500).send(error);
+                    if(req.query.format=="xml"){
+                      res.setHeader('Content-Type', 'application/xml')
+                    }
+                    if(req.query.format=="json" || req.query.format==null){
+                      res.setHeader('Content-Type', 'application/json')
+                    }
+                    res.status(500).send(this.dbConn.format_error(error, req.query.format));
                   });
                 }).catch((error) => {
-                  res.status(500).send(error);
+                  if(req.query.format=="xml"){
+                    res.setHeader('Content-Type', 'application/xml')
+                  }
+                  if(req.query.format=="json" || req.query.format==null){
+                    res.setHeader('Content-Type', 'application/json')
+                  }
+                  res.status(500).send(this.dbConn.format_error(error, req.query.format));
                 });
             };
         });
@@ -111,10 +129,22 @@ export class Index {
                   res.setHeader('Content-Type', 'application/'+req.query.format)
                   res.status(200).send(this.dbConn.format_data(master_data, req.query.format));
                 }).catch((error) => {
-                  res.status(500).send(error);
+                  if(req.query.format=="xml"){
+                    res.setHeader('Content-Type', 'application/xml')
+                  }
+                  if(req.query.format=="json" || req.query.format==null){
+                    res.setHeader('Content-Type', 'application/json')
+                  }
+                  res.status(500).send(this.dbConn.format_error(error, req.query.format));
                 });
               }).catch((error) => {
-                res.status(500).send(error);
+                if(req.query.format=="xml"){
+                  res.setHeader('Content-Type', 'application/xml')
+                }
+                if(req.query.format=="json" || req.query.format==null){
+                  res.setHeader('Content-Type', 'application/json')
+                }
+                res.status(500).send(this.dbConn.format_error(error, req.query.format));
               });
         });
         app.route('/all_tables')
@@ -126,7 +156,13 @@ export class Index {
                 res.setHeader('Content-Type', 'application/'+req.query.format)
                 res.status(200).send(this.dbConn.format_data(data, req.query.format));
               }).catch((error) => {
-                res.status(500).send(error);
+                if(req.query.format=="xml"){
+                  res.setHeader('Content-Type', 'application/xml')
+                }
+                if(req.query.format=="json" || req.query.format==null){
+                  res.setHeader('Content-Type', 'application/json')
+                }
+                res.status(500).send(this.dbConn.format_error(error, req.query.format));
               });
         });
         app.route('/meta_data')
@@ -138,7 +174,13 @@ export class Index {
                 res.setHeader('Content-Type', 'application/'+req.query.format)
                 res.status(200).send(this.dbConn.format_data(data, req.query.format));
               }).catch((error) => {
-                res.status(500).send(error);
+                if(req.query.format=="xml"){
+                  res.setHeader('Content-Type', 'application/xml')
+                }
+                if(req.query.format=="json" || req.query.format==null){
+                  res.setHeader('Content-Type', 'application/json')
+                }
+                res.status(500).send(this.dbConn.format_error(error, req.query.format));
               });
         });
     };
