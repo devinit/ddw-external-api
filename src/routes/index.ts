@@ -42,7 +42,7 @@ export class Index {
                 <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
               </ul>
               <h3>Example query</h3>
-              <p><a href="/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&format=xml">/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&format=xml</a></p>
+              <p><a href="/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml">/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml</a></p>
 
             </html>
             `);
