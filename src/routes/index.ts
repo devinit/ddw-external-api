@@ -5,6 +5,20 @@ export class Index {
 
     public dbConn: DB = new DB();
 
+    public send_data(res, data, format?, indicator?): void {
+      let file_extension = format?format:"json"
+      let file_name = indicator?indicator:"download"
+      res.setHeader('Content-disposition', 'inline; filename='+file_name+'.'+file_extension);
+      res.setHeader('Content-Type', 'application/'+file_extension)
+      res.status(200).send(this.dbConn.format_data(data, format));
+    }
+
+    public send_error(res, error, format?): void {
+      let file_extension = format?format:"json"
+      res.setHeader('Content-disposition', 'inline; filename=error.'+file_extension);
+      res.setHeader('Content-Type', 'application/'+file_extension)
+      res.status(200).send(this.dbConn.format_error(error, format));
+    }
     public routes(app): void {
         app.route('/')
         .get((req: Request, res: Response) => {
@@ -50,13 +64,7 @@ export class Index {
         app.route('/single_table')
         .get((req: Request, res: Response) => {
             if(this.dbConn.forbidden_tables.indexOf(req.query.indicator) > -1){
-              if(req.query.format=="xml"){
-                res.setHeader('Content-Type', 'application/xml')
-              }
-              if(req.query.format=="json" || req.query.format==null){
-                res.setHeader('Content-Type', 'application/json')
-              }
-              res.status(403).send(this.dbConn.format_error({"code":"403"}, req.query.format))
+              this.send_error(res, {"code":"403"}, req.query.format)
             }else{
               this.dbConn.column_names(req.query.indicator)
                 .then((c_names) => {
@@ -71,27 +79,12 @@ export class Index {
                     req.query.offset
                   )
                   .then((data) => {
-                    let file_extension = req.query.format?req.query.format:"json"
-                    res.setHeader('Content-disposition', 'inline; filename='+req.query.indicator+'.'+file_extension);
-                    res.setHeader('Content-Type', 'application/'+req.query.format)
-                    res.status(200).send(this.dbConn.format_data(data, req.query.format));
+                    this.send_data(res, data, req.query.format, req.query.indicator)
                   }).catch((error) => {
-                    if(req.query.format=="xml"){
-                      res.setHeader('Content-Type', 'application/xml')
-                    }
-                    if(req.query.format=="json" || req.query.format==null){
-                      res.setHeader('Content-Type', 'application/json')
-                    }
-                    res.status(500).send(this.dbConn.format_error(error, req.query.format));
+                    this.send_error(res, error, req.query.format)
                   });
                 }).catch((error) => {
-                  if(req.query.format=="xml"){
-                    res.setHeader('Content-Type', 'application/xml')
-                  }
-                  if(req.query.format=="json" || req.query.format==null){
-                    res.setHeader('Content-Type', 'application/json')
-                  }
-                  res.status(500).send(this.dbConn.format_error(error, req.query.format));
+                  this.send_error(res, error, req.query.format)
                 });
             };
         });
@@ -124,63 +117,30 @@ export class Index {
                     master_data = master_data.concat(data_with_ind);
                   });
 
-                  let file_extension = req.query.format?req.query.format:"json"
-                  res.setHeader('Content-disposition', 'inline; filename=multi_table.'+file_extension);
-                  res.setHeader('Content-Type', 'application/'+req.query.format)
-                  res.status(200).send(this.dbConn.format_data(master_data, req.query.format));
+                  this.send_data(res, master_data, req.query.format, req.query.indicator)
                 }).catch((error) => {
-                  if(req.query.format=="xml"){
-                    res.setHeader('Content-Type', 'application/xml')
-                  }
-                  if(req.query.format=="json" || req.query.format==null){
-                    res.setHeader('Content-Type', 'application/json')
-                  }
-                  res.status(500).send(this.dbConn.format_error(error, req.query.format));
+                  this.send_error(res, error, req.query.format)
                 });
               }).catch((error) => {
-                if(req.query.format=="xml"){
-                  res.setHeader('Content-Type', 'application/xml')
-                }
-                if(req.query.format=="json" || req.query.format==null){
-                  res.setHeader('Content-Type', 'application/json')
-                }
-                res.status(500).send(this.dbConn.format_error(error, req.query.format));
+                this.send_error(res, error, req.query.format)
               });
         });
         app.route('/all_tables')
         .get((req: Request, res: Response) => {
             this.dbConn.all_tables()
               .then((data) => {
-                let file_extension = req.query.format?req.query.format:"json"
-                res.setHeader('Content-disposition', 'inline; filename=all_tables'+'.'+file_extension);
-                res.setHeader('Content-Type', 'application/'+req.query.format)
-                res.status(200).send(this.dbConn.format_data(data, req.query.format));
+                this.send_data(res, data, req.query.format)
               }).catch((error) => {
-                if(req.query.format=="xml"){
-                  res.setHeader('Content-Type', 'application/xml')
-                }
-                if(req.query.format=="json" || req.query.format==null){
-                  res.setHeader('Content-Type', 'application/json')
-                }
-                res.status(500).send(this.dbConn.format_error(error, req.query.format));
+                this.send_error(res, error, req.query.format)
               });
         });
         app.route('/meta_data')
         .get((req: Request, res: Response) => {
             this.dbConn.meta_data()
               .then((data) => {
-                let file_extension = req.query.format?req.query.format:"json"
-                res.setHeader('Content-disposition', 'inline; filename=meta_data'+'.'+file_extension);
-                res.setHeader('Content-Type', 'application/'+req.query.format)
-                res.status(200).send(this.dbConn.format_data(data, req.query.format));
+                this.send_data(res, data, req.query.format)
               }).catch((error) => {
-                if(req.query.format=="xml"){
-                  res.setHeader('Content-Type', 'application/xml')
-                }
-                if(req.query.format=="json" || req.query.format==null){
-                  res.setHeader('Content-Type', 'application/json')
-                }
-                res.status(500).send(this.dbConn.format_error(error, req.query.format));
+                this.send_error(res, error, req.query.format)
               });
         });
     };
