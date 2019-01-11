@@ -255,4 +255,27 @@ export class DB {
         }
         return JSON.stringify(data)
     }
+    public format_error(error_data, format = "json"): string{
+        var data:any = {}
+        // Known error codes
+        if(error_data.code=="42P01"){
+          data.code = "42P01"
+          data.message = "Indicator not found. Please confirm your desired indicator appears in the `/all_tables` route."
+        }else if(error_data.code=="403"){
+          data.code = "403"
+          data.message = "Access is forbidden."
+        }else{
+          data.code = error_data.code
+          data.message = "Sorry, an unknown error occurred. Please send the error code above to info@devinit.org for assistance."
+        }
+        if(format=="xml"){
+          let options = {compact: true, ignoreComment: true}
+          let data_obj = JSON.stringify({"error":data})
+          return "<dataset>"+convert.json2xml(data_obj, options)+"</dataset>"
+        }else if(format=="csv"){
+          const csv = json2csv.parse(data);
+          return csv;
+        }
+        return JSON.stringify(data)
+    }
 }
