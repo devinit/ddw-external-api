@@ -228,7 +228,7 @@ export class DB {
             let entities_arr = entities.split(",")
             return this.db.any("SELECT $1~.*, $6~.name FROM $1~ LEFT JOIN $6~ ON $1~.$2~ = $6~.id WHERE $2 IN ($3:csv) ORDER BY $2~ ASC LIMIT $4 OFFSET $5;", [indicator, entity_name, entities_arr, limit, offset, entity_table])
           }
-          return this.db.any("SELECT $1~.*, $5~.name FROM $1~ LEFT JOIN $5~ ON $1~.$2~ = $5~.id WHERE ORDER BY $2~ ASC LIMIT $3 OFFSET $4;", [indicator, entity_name, limit, offset, entity_table])
+          return this.db.any("SELECT $1~.*, $5~.name FROM $1~ LEFT JOIN $5~ ON $1~.$2~ = $5~.id ORDER BY $2~ ASC LIMIT $3 OFFSET $4;", [indicator, entity_name, limit, offset, entity_table])
         }
     }
     public multi_table(column_names, indicators, entities?, start_year = "0", end_year = "9999", limit = "1000000", offset = "0"): Promise<any>{
