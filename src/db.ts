@@ -244,17 +244,13 @@ export class DB {
     public meta_data(): Promise<any>{
       return this.db.any("SELECT * FROM public.di_concept_in_dh;")
     }
-    public json2csv(json_data): string{
-      if(typeof(json_data)=="object"){
-        let output_arr = []
-        output_arr.push('"'+Object.keys(json_data).join('","')+'"')
-        output_arr.push('"'+Object.keys(json_data).map(key => json_data[key]).join('","')+'"')
-        return(output_arr.join("\n"))
-      }else{
-        let output_arr = json_data.map(row => '"'+Object.keys(row).map(key => row[key]).join('","')+'"')
-        output_arr.unshift(Object.keys(json_data[0]))
-        return(output_arr.join("\n"))
-      }
+    public json2csv(json_arr): string{
+      let json_keys = Object.keys(json_arr[0]);
+      const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
+      const csvStringifier = createCsvStringifier({
+          header: json_keys.map(function(key){return({"id": key, "title": key})})
+      });
+      return(csvStringifier.getHeaderString()+csvStringifier.stringifyRecords(json_arr))
     }
     public format_data(data, format = "json"): string{
         if(format=="xml"){
@@ -285,7 +281,7 @@ export class DB {
           let data_obj = JSON.stringify({"error":data})
           return "<dataset>"+convert.json2xml(data_obj, options)+"</dataset>"
         }else if(format=="csv"){
-          const csv = this.json2csv(data);
+          const csv = this.json2csv([data]);
           return csv;
         }
         return JSON.stringify(data)
