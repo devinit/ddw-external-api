@@ -1,85 +1,21 @@
 import { Application, Request, Response } from 'express';
 import { DB } from '../db';
+import { join } from 'path';
 
 type ResponseFormat = 'json' | 'csv' | 'xml';
-export class Index {
-
+export class Routes {
   dbConn: DB = new DB();
 
-  send_data(res: Response, data: any, format?: ResponseFormat, indicator?: string): void {
-    const file_extension = format ? format : 'json';
-    const file_name = indicator ? indicator : 'download';
-    res.setHeader('Content-disposition', 'inline; filename=' + file_name + '.' + file_extension);
-    res.setHeader('Content-Type', 'application/' + file_extension);
-    res.status(200).send(this.dbConn.format_data(data, format));
-  }
-
-  send_error(res: Response, error: { code: string }, format?: ResponseFormat): void {
-    const file_extension = format ? format : 'json';
-    res.setHeader('Content-disposition', 'inline; filename=error.' + file_extension);
-    res.setHeader('Content-Type', 'application/' + file_extension);
-    res.status(200).send(this.dbConn.format_error(error, format));
-  }
-
-  routes(app: Application): void {
-    // tslint:disable max-line-length
+  init(app: Application): void {
     app.route('/')
       .get((_req: Request, res: Response) => {
-        res.status(200).send(`
-            <html>
-              <h1>DDW API</h1>
-              <h2>Endpoints</h2>
-              <ul>
-                <li><a href="/all_tables">/all_tables</a></li>
-                <li>
-                  <a href="/meta_data">/meta_data</a> (just serves di_concept_in_dh, not too useful at the moment)
-                </li>
-                <li>/single_table</li>
-                <li>/multi_table</li>
-              </ul>
-              <h2>Parameters for /single_table</h2>
-              <ul>
-                <li><b>indicator</b>: ?indicator=population_total</li>
-                <li><b>entities</b>: ?entities=UG,KE,NA</li>
-                <li><b>start_year</b>: ?start_year=2000</li>
-                <li><b>end_year</b>: ?end_year=2001</li>
-                <li><b>limit</b>: ?limit=100</li>
-                <li><b>offset</b>: ?offset=200</li>
-                <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
-              </ul>
-              <h3>Example query</h3>
-              <p>
-                <a href="/single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">
-                  /single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml
-                </a>
-              </p>
-
-              <h2>Parameters for /multi_table</h2>
-              <ul>
-                <li><b>indicators</b>: ?indicators=population_total,govt_revenue_pc_gdp</li>
-                <li><b>entities</b>: ?entities=UG,KE,NA</li>
-                <li><b>start_year</b>: ?start_year=2000</li>
-                <li><b>end_year</b>: ?end_year=2001</li>
-                <li><b>limit</b>: ?limit=100</li>
-                <li><b>offset</b>: ?offset=200</li>
-                <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
-              </ul>
-              <h3>Example query</h3>
-              <p>
-                <a href="/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml">
-                  /multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml
-                </a>
-              </p>
-
-            </html>
-            `);
+        res.status(200).sendFile(join(__dirname + '/index.html'));
       });
-    // tslint:enable max-line-length
 
     app.route('/single_table')
       .get((req: Request, res: Response) => {
         if (this.dbConn.forbidden_tables.indexOf(req.query.indicator) > -1) {
-          this.send_error(res, { code: '403' }, req.query.format);
+          this.sendError(res, { code: '403' }, req.query.format);
         } else {
           this.dbConn.column_names(req.query.indicator)
             .then((c_names) => {
@@ -94,12 +30,12 @@ export class Index {
                 req.query.offset
               )
                 .then((data) => {
-                  this.send_data(res, data, req.query.format, req.query.indicator);
+                  this.sendData(res, data, req.query.format, req.query.indicator);
                 }).catch((error) => {
-                  this.send_error(res, error, req.query.format);
+                  this.sendError(res, error, req.query.format);
                 });
             }).catch((error) => {
-              this.send_error(res, error, req.query.format);
+              this.sendError(res, error, req.query.format);
             });
         }
       });
@@ -134,12 +70,12 @@ export class Index {
                 master_data = master_data.concat(data_with_ind);
               });
 
-              this.send_data(res, master_data, req.query.format, req.query.indicator);
+              this.sendData(res, master_data, req.query.format, req.query.indicator);
             }).catch((error) => {
-              this.send_error(res, error, req.query.format);
+              this.sendError(res, error, req.query.format);
             });
           }).catch((error) => {
-            this.send_error(res, error, req.query.format);
+            this.sendError(res, error, req.query.format);
           });
       });
 
@@ -147,9 +83,9 @@ export class Index {
       .get((req: Request, res: Response) => {
         this.dbConn.all_tables()
           .then((data) => {
-            this.send_data(res, data, req.query.format);
+            this.sendData(res, data, req.query.format);
           }).catch((error) => {
-            this.send_error(res, error, req.query.format);
+            this.sendError(res, error, req.query.format);
           });
       });
 
@@ -157,10 +93,25 @@ export class Index {
       .get((req: Request, res: Response) => {
         this.dbConn.meta_data()
           .then((data) => {
-            this.send_data(res, data, req.query.format);
+            this.sendData(res, data, req.query.format);
           }).catch((error) => {
-            this.send_error(res, error, req.query.format);
+            this.sendError(res, error, req.query.format);
           });
       });
+  }
+
+  sendData(res: Response, data: any, format?: ResponseFormat, indicator?: string): void {
+    const file_extension = format ? format : 'json';
+    const file_name = indicator ? indicator : 'download';
+    res.setHeader('Content-disposition', 'inline; filename=' + file_name + '.' + file_extension);
+    res.setHeader('Content-Type', 'application/' + file_extension);
+    res.status(200).send(this.dbConn.format_data(data, format));
+  }
+
+  sendError(res: Response, error: { code: string }, format?: ResponseFormat): void {
+    const file_extension = format ? format : 'json';
+    res.setHeader('Content-disposition', 'inline; filename=error.' + file_extension);
+    res.setHeader('Content-Type', 'application/' + file_extension);
+    res.status(200).send(this.dbConn.format_error(error, format));
   }
 }

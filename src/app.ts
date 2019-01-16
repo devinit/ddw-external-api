@@ -1,15 +1,15 @@
 import * as express from 'express';
 import { json, urlencoded } from 'body-parser';
 import * as Ddos from 'ddos';
-import { Index } from './routes';
+import { Routes } from './routes';
 
 class App {
   app: express.Application = express();
-  indexRoutes: Index = new Index();
+  routes: Routes = new Routes();
 
   constructor() {
     this.config();
-    this.indexRoutes.routes(this.app);
+    this.routes.init(this.app);
   }
 
   private config(): void {
