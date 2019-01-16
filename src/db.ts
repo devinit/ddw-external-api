@@ -244,13 +244,25 @@ export class DB {
     public meta_data(): Promise<any>{
       return this.db.any("SELECT * FROM public.di_concept_in_dh;")
     }
+    public json2csv(json_data): string{
+      if(typeof(json_data)=="object"){
+        let output_arr = []
+        output_arr.push('"'+Object.keys(json_data).join('","')+'"')
+        output_arr.push('"'+Object.values(json_data).join('","')+'"')
+        return(output_arr.join("\n"))
+      }else{
+        let output_arr = json_data.map(row => '"'+Object.values(row).join('","')+'"')
+        output_arr.unshift(Object.keys(json_data[0]))
+        return(output_arr.join("\n"))
+      }
+    }
     public format_data(data, format = "json"): string{
         if(format=="xml"){
           let options = {compact: true, ignoreComment: true}
           let data_obj = JSON.stringify({"record":data})
           return "<dataset>"+convert.json2xml(data_obj, options)+"</dataset>"
         }else if(format=="csv"){
-          const csv = json2csv.parse(data);
+          const csv = this.json2csv(data);
           return csv;
         }
         return JSON.stringify(data)
@@ -273,7 +285,7 @@ export class DB {
           let data_obj = JSON.stringify({"error":data})
           return "<dataset>"+convert.json2xml(data_obj, options)+"</dataset>"
         }else if(format=="csv"){
-          const csv = json2csv.parse(data);
+          const csv = this.json2csv(data);
           return csv;
         }
         return JSON.stringify(data)
