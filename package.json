@@ -22,9 +22,9 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "csv-writer": "^1.2.0",
     "ddos": "^0.1.31",
     "express": "^4.16.4",
-    "json2csv": "^4.3.2",
     "pg-promise": "^8.5.3",
     "xml-js": "^1.6.8"
   }

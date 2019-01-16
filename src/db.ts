@@ -244,13 +244,21 @@ export class DB {
     public meta_data(): Promise<any>{
       return this.db.any("SELECT * FROM public.di_concept_in_dh;")
     }
+    public json2csv(json_arr): string{
+      let json_keys = Object.keys(json_arr[0]);
+      const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
+      const csvStringifier = createCsvStringifier({
+          header: json_keys.map(function(key){return({"id": key, "title": key})})
+      });
+      return(csvStringifier.getHeaderString()+csvStringifier.stringifyRecords(json_arr))
+    }
     public format_data(data, format = "json"): string{
         if(format=="xml"){
           let options = {compact: true, ignoreComment: true}
           let data_obj = JSON.stringify({"record":data})
           return "<dataset>"+convert.json2xml(data_obj, options)+"</dataset>"
         }else if(format=="csv"){
-          const csv = json2csv.parse(data);
+          const csv = this.json2csv(data);
           return csv;
         }
         return JSON.stringify(data)
@@ -273,7 +281,7 @@ export class DB {
           let data_obj = JSON.stringify({"error":data})
           return "<dataset>"+convert.json2xml(data_obj, options)+"</dataset>"
         }else if(format=="csv"){
-          const csv = json2csv.parse(data);
+          const csv = this.json2csv([data]);
           return csv;
         }
         return JSON.stringify(data)
