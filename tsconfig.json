@@ -1,14 +1,29 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs",
-      "outDir": "dist",
-      "resolveJsonModule": true
-    },
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "node_modules"
-    ]
- }
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "declaration": false,
+    "removeComments": true,
+    "noLib": false,
+    "watch": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "strictFunctionTypes": false,
+    "skipLibCheck": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "lib": [
+    "dom",
+    "es2017"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
