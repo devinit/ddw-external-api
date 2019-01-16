@@ -4,6 +4,7 @@
     "module": "commonjs",
     "outDir": "dist",
     "resolveJsonModule": true,
+    "noEmitOnError": true,
     "declaration": false,
     "removeComments": true,
     "noLib": false,
