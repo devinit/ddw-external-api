@@ -248,10 +248,10 @@ export class DB {
       if(typeof(json_data)=="object"){
         let output_arr = []
         output_arr.push('"'+Object.keys(json_data).join('","')+'"')
-        output_arr.push('"'+Object.values(json_data).join('","')+'"')
+        output_arr.push('"'+Object.keys(json_data).map(key => json_data[key]).join('","')+'"')
         return(output_arr.join("\n"))
       }else{
-        let output_arr = json_data.map(row => '"'+Object.values(row).join('","')+'"')
+        let output_arr = json_data.map(row => '"'+Object.keys(row).map(key => row[key]).join('","')+'"')
         output_arr.unshift(Object.keys(json_data[0]))
         return(output_arr.join("\n"))
       }
