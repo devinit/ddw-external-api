@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "npm i && ts-node-dev --compilerOptions '{ \"strict\": false }' ./src/server.ts",
+    "grunt": "grunt",
+    "dev": "npm i && npm run grunt && ts-node-dev --compilerOptions '{ \"strict\": false }' ./src/server.ts",
     "start": "node ./dist/server.js",
-    "prod": "npm run build && npm run start"
+    "prod": "npm run grunt && npm run build && npm run start"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,9 @@
     "@types/express": "^4.16.0",
     "@types/json2csv": "^4.2.0",
     "@types/node": "^10.12.12",
+    "grunt": "^1.0.3",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-copy": "^1.0.0",
     "ts-node": "^7.0.1",
     "ts-node-dev": "^1.0.0-pre.32",
     "tslint": "^5.12.1",
