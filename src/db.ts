@@ -40,7 +40,7 @@ export class DB {
   }
 
   fetchFromTable(options: FetchOptions): Promise<any> {
-    const { columnNames, indicator, entities, startYear = 0, endYear = 0, limit = 1000000, offset = 0 } = options;
+    const { columnNames, indicator, entities, startYear = 0, endYear = 9999, limit = 1000000, offset = 0 } = options;
     let entityName = '';
     let entityTable = 'di_entity';
 
@@ -123,6 +123,6 @@ export class DB {
       data.message = 'Access is forbidden.';
     }
 
-    return this.formatData(data, format, true);
+    return this.formatData([data], format, true);
   }
 }
