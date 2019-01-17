@@ -45,34 +45,34 @@ export class Routes {
 
     app.route('/multi_table')
       .get((req: Request, res: Response) => {
+        const { entities, start_year: startYear, end_year: endYear, limit, offset } = req.query;
         const indicators: string[] = req.query.indicators.split(',');
-        const validIndicators = indicators.filter((item) => {
-          return forbiddenTables.indexOf(item) === -1;
-        });
+        const validIndicators = indicators.filter((indicator) => forbiddenTables.indexOf(indicator) === -1);
         this.dbHandler.getColumnNames(validIndicators[0])
-          .then((table_keys) => {
+          .then((columnNames) => {
             this.dbHandler.fetchData({
-              columnNames: table_keys,
+              columnNames,
               indicator: validIndicators,
-              entities: req.query.entities,
-              startYear: req.query.start_year,
-              endYear: req.query.end_year,
-              limit: req.query.limit,
-              offset: req.query.offset
-            }).then((data_arr: any[]) => {
-              let master_data: any[] = [];
-              data_arr.forEach((item, index) => {
-                const matching_indicator = validIndicators[index];
-                const data_with_ind = item.map((el: any) => {
+              entities,
+              startYear,
+              endYear,
+              limit,
+              offset
+            })
+            .then((data: any[]) => {
+              let masterData: any[] = [];
+              data.forEach((item, index) => {
+                const matchingIndicator = validIndicators[index];
+                const matchingData = item.map((el: any) => {
                   const o = { ...el };
-                  o.indicator = matching_indicator;
+                  o.indicator = matchingIndicator;
 
                   return o;
                 });
-                master_data = master_data.concat(data_with_ind);
+                masterData = masterData.concat(matchingData);
               });
 
-              this.sendData(res, master_data, req.query.format, req.query.indicator);
+              this.sendData(res, masterData, req.query.format, req.query.indicator);
             }).catch((error) => {
               this.sendError(res, error, req.query.format);
             });
@@ -103,17 +103,17 @@ export class Routes {
   }
 
   sendData(res: Response, data: any, format?: ResponseFormat, indicator?: string): void {
-    const file_extension = format ? format : 'json';
-    const file_name = indicator ? indicator : 'download';
-    res.setHeader('Content-disposition', 'inline; filename=' + file_name + '.' + file_extension);
-    res.setHeader('Content-Type', 'application/' + file_extension);
+    const fileExtension = format ? format : 'json';
+    const fileName = indicator ? indicator : 'download';
+    res.setHeader('Content-disposition', 'inline; filename=' + fileName + '.' + fileExtension);
+    res.setHeader('Content-Type', 'application/' + fileExtension);
     res.status(200).send(this.dbHandler.formatData(data, format));
   }
 
   sendError(res: Response, error: { code: string }, format?: ResponseFormat): void {
-    const file_extension = format ? format : 'json';
-    res.setHeader('Content-disposition', 'inline; filename=error.' + file_extension);
-    res.setHeader('Content-Type', 'application/' + file_extension);
+    const fileExtension = format ? format : 'json';
+    res.setHeader('Content-disposition', 'inline; filename=error.' + fileExtension);
+    res.setHeader('Content-Type', 'application/' + fileExtension);
     res.status(200).send(this.dbHandler.formatError(error, format));
   }
 }
