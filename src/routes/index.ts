@@ -1,10 +1,11 @@
 import { Application, Request, Response } from 'express';
 import { DB } from '../db';
 import { join } from 'path';
+import { forbiddenTables } from '../utils';
 
 type ResponseFormat = 'json' | 'csv' | 'xml';
 export class Routes {
-  dbConn: DB = new DB();
+  dbHandler: DB = new DB();
 
   init(app: Application): void {
     app.route('/')
@@ -14,27 +15,29 @@ export class Routes {
 
     app.route('/single_table')
       .get((req: Request, res: Response) => {
-        if (this.dbConn.forbidden_tables.indexOf(req.query.indicator) > -1) {
+        if (forbiddenTables.indexOf(req.query.indicator) > -1) {
           this.sendError(res, { code: '403' }, req.query.format);
         } else {
-          this.dbConn.column_names(req.query.indicator)
-            .then((c_names) => {
-              const table_keys = Object.keys(c_names[0]);
-              this.dbConn.single_table(
-                table_keys,
-                req.query.indicator,
-                req.query.entities,
-                req.query.start_year,
-                req.query.end_year,
-                req.query.limit,
-                req.query.offset
-              )
+          this.dbHandler.getColumnNames(req.query.indicator)
+            .then((columnNames) => {
+              const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset } = req.query;
+              this.dbHandler.fetchData({
+                columnNames,
+                indicator,
+                entities,
+                startYear,
+                endYear,
+                limit,
+                offset
+              })
                 .then((data) => {
                   this.sendData(res, data, req.query.format, req.query.indicator);
-                }).catch((error) => {
+                })
+                .catch((error) => {
                   this.sendError(res, error, req.query.format);
                 });
-            }).catch((error) => {
+            })
+            .catch((error) => {
               this.sendError(res, error, req.query.format);
             });
         }
@@ -43,24 +46,23 @@ export class Routes {
     app.route('/multi_table')
       .get((req: Request, res: Response) => {
         const indicators: string[] = req.query.indicators.split(',');
-        const valid_indicators = indicators.filter((item) => {
-          return this.dbConn.forbidden_tables.indexOf(item) === -1;
+        const validIndicators = indicators.filter((item) => {
+          return forbiddenTables.indexOf(item) === -1;
         });
-        this.dbConn.column_names(valid_indicators[0])
-          .then((c_names) => {
-            const table_keys = Object.keys(c_names[0]);
-            this.dbConn.multi_table(
-              table_keys,
-              valid_indicators,
-              req.query.entities,
-              req.query.start_year,
-              req.query.end_year,
-              req.query.limit,
-              req.query.offset
-            ).then((data_arr: any[]) => {
+        this.dbHandler.getColumnNames(validIndicators[0])
+          .then((table_keys) => {
+            this.dbHandler.fetchData({
+              columnNames: table_keys,
+              indicator: validIndicators,
+              entities: req.query.entities,
+              startYear: req.query.start_year,
+              endYear: req.query.end_year,
+              limit: req.query.limit,
+              offset: req.query.offset
+            }).then((data_arr: any[]) => {
               let master_data: any[] = [];
               data_arr.forEach((item, index) => {
-                const matching_indicator = valid_indicators[index];
+                const matching_indicator = validIndicators[index];
                 const data_with_ind = item.map((el: any) => {
                   const o = { ...el };
                   o.indicator = matching_indicator;
@@ -81,7 +83,7 @@ export class Routes {
 
     app.route('/all_tables')
       .get((req: Request, res: Response) => {
-        this.dbConn.all_tables()
+        this.dbHandler.allTablesInfo()
           .then((data) => {
             this.sendData(res, data, req.query.format);
           }).catch((error) => {
@@ -91,7 +93,7 @@ export class Routes {
 
     app.route('/meta_data')
       .get((req: Request, res: Response) => {
-        this.dbConn.meta_data()
+        this.dbHandler.fetchMetaData()
           .then((data) => {
             this.sendData(res, data, req.query.format);
           }).catch((error) => {
@@ -105,13 +107,13 @@ export class Routes {
     const file_name = indicator ? indicator : 'download';
     res.setHeader('Content-disposition', 'inline; filename=' + file_name + '.' + file_extension);
     res.setHeader('Content-Type', 'application/' + file_extension);
-    res.status(200).send(this.dbConn.format_data(data, format));
+    res.status(200).send(this.dbHandler.formatData(data, format));
   }
 
   sendError(res: Response, error: { code: string }, format?: ResponseFormat): void {
     const file_extension = format ? format : 'json';
     res.setHeader('Content-disposition', 'inline; filename=error.' + file_extension);
     res.setHeader('Content-Type', 'application/' + file_extension);
-    res.status(200).send(this.dbConn.format_error(error, format));
+    res.status(200).send(this.dbHandler.formatError(error, format));
   }
 }
