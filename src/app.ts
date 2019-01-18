@@ -1,29 +1,27 @@
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
+import { json, urlencoded } from 'body-parser';
 import * as Ddos from 'ddos';
-import { Index } from "./routes/index";
+import { Routes } from './routes';
 
 class App {
+  app: express.Application = express();
+  routes: Routes = new Routes();
 
-    public app: express.Application;
-    public indexRoutes: Index = new Index();
+  constructor() {
+    this.config();
+    this.routes.init(this.app);
+  }
 
-    constructor() {
-        const ddos = new Ddos();
-        this.app = express();
-        this.app.use(express.static('public'))
-        this.app.use(ddos.express)
-        this.config();
-        this.indexRoutes.routes(this.app);
-    }
-
-    private config(): void {
-        this.app.use(bodyParser.json());
-        this.app.use(bodyParser.urlencoded({
-            extended: false
-        }));
-    }
-
+  private config(): void {
+    this.app.use(express.static('public'));
+    this.app.use(new Ddos().express);
+    this.app.use(json());
+    this.app.use(
+      urlencoded({
+        extended: false
+      })
+    );
+  }
 }
 
 export default new App().app;

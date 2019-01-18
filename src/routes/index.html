@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DDW API</title>
+  </head>
+  <body>
+    <h1>DDW API</h1>
+    <h2>Endpoints</h2>
+    <ul>
+      <li><a href="/all_tables">/all_tables</a></li>
+      <li>
+        <a href="/meta_data">/meta_data</a> (just serves di_concept_in_dh, not too useful at the moment)
+      </li>
+      <li>/single_table</li>
+      <li>/multi_table</li>
+    </ul>
+    <h2>Parameters for /single_table</h2>
+    <ul>
+      <li><b>indicator</b>: ?indicator=population_total</li>
+      <li><b>entities</b>: ?entities=UG,KE,NA</li>
+      <li><b>start_year</b>: ?start_year=2000</li>
+      <li><b>end_year</b>: ?end_year=2001</li>
+      <li><b>limit</b>: ?limit=100</li>
+      <li><b>offset</b>: ?offset=200</li>
+      <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
+    </ul>
+    <h3>Example query</h3>
+    <p>
+      <a href="/single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">
+        /single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml
+      </a>
+    </p>
+
+    <h2>Parameters for /multi_table</h2>
+    <ul>
+      <li><b>indicators</b>: ?indicators=population_total,govt_revenue_pc_gdp</li>
+      <li><b>entities</b>: ?entities=UG,KE,NA</li>
+      <li><b>start_year</b>: ?start_year=2000</li>
+      <li><b>end_year</b>: ?end_year=2001</li>
+      <li><b>limit</b>: ?limit=100</li>
+      <li><b>offset</b>: ?offset=200</li>
+      <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
+    </ul>
+    <h3>Example query</h3>
+    <p>
+      <a href="/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml">
+        /multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml
+      </a>
+    </p>
+  </body>
+</html>
