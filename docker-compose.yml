@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ddw-external-api:ddw-api
     volumes:
       - ".:/src"
     ports:
