@@ -1,51 +1,68 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>DDW API</title>
+  <head profile="http://www.w3.org/2005/10/profile">
+    <title>DDH API</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link as="style" href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link as="style" href="/css/styles.css" rel="stylesheet"/>
   </head>
-  <body>
-    <h1>DDW API</h1>
-    <h2>Endpoints</h2>
-    <ul>
-      <li><a href="/all_tables">/all_tables</a></li>
-      <li>
-        <a href="/meta_data">/meta_data</a> (just serves di_concept_in_dh, not too useful at the moment)
-      </li>
-      <li>/single_table</li>
-      <li>/multi_table</li>
-    </ul>
-    <h2>Parameters for /single_table</h2>
-    <ul>
-      <li><b>indicator</b>: ?indicator=population_total</li>
-      <li><b>entities</b>: ?entities=UG,KE,NA</li>
-      <li><b>start_year</b>: ?start_year=2000</li>
-      <li><b>end_year</b>: ?end_year=2001</li>
-      <li><b>limit</b>: ?limit=100</li>
-      <li><b>offset</b>: ?offset=200</li>
-      <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
-    </ul>
-    <h3>Example query</h3>
-    <p>
-      <a href="/single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">
-        /single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml
-      </a>
-    </p>
+  <body class="container-fluid">
+    <div class="row flex-xl-nowrap">
+      <div class="col-lg-12" width="100%">
+        <h3 style="padding-top: 20px;">Development Data Hub API</h3>
+        <div class="alert alert-info">Find the full documentation <a href="https://github.com/devinit/ddw-external-api">here</a></div>
+        <div class="jumbotron">
+          <h4>Endpoints</h4>
+          <ul>
+            <li><a href="/all_tables">/all_tables</a></li>
+            <li>
+              <a href="/meta_data">/meta_data</a> (just serves di_concept_in_dh, not too useful at the moment)
+            </li>
+            <li>/single_table</li>
+            <li>/multi_table</li>
+          </ul>
+        </div>
 
-    <h2>Parameters for /multi_table</h2>
-    <ul>
-      <li><b>indicators</b>: ?indicators=population_total,govt_revenue_pc_gdp</li>
-      <li><b>entities</b>: ?entities=UG,KE,NA</li>
-      <li><b>start_year</b>: ?start_year=2000</li>
-      <li><b>end_year</b>: ?end_year=2001</li>
-      <li><b>limit</b>: ?limit=100</li>
-      <li><b>offset</b>: ?offset=200</li>
-      <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
-    </ul>
-    <h3>Example query</h3>
-    <p>
-      <a href="/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml">
-        /multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml
-      </a>
-    </p>
+        <div class="jumbotron">
+          <h4>Parameters for /single_table</h4>
+          <ul>
+            <li><b>indicator</b>: ?indicator=population_total</li>
+            <li><b>entities</b>: ?entities=UG,KE,NA</li>
+            <li><b>start_year</b>: ?start_year=2000</li>
+            <li><b>end_year</b>: ?end_year=2001</li>
+            <li><b>limit</b>: ?limit=100</li>
+            <li><b>offset</b>: ?offset=200</li>
+            <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
+          </ul>
+          <h4>Example query</h4>
+          <p>
+            <a href="/single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml">
+              /single_table?indicator=population_total&entities=UG,KE&start_year=2000&end_year=2000&limit=2&offset=0&format=xml
+            </a>
+          </p>
+        </div>
+
+        <div class="jumbotron">
+          <h4>Parameters for /multi_table</h4>
+          <ul>
+            <li><b>indicators</b>: ?indicators=population_total,govt_revenue_pc_gdp</li>
+            <li><b>entities</b>: ?entities=UG,KE,NA</li>
+            <li><b>start_year</b>: ?start_year=2000</li>
+            <li><b>end_year</b>: ?end_year=2001</li>
+            <li><b>limit</b>: ?limit=100</li>
+            <li><b>offset</b>: ?offset=200</li>
+            <li><b>format</b>: ?format=xml (available options are xml, json, or csv)</li>
+          </ul>
+          <h4>Example query</h4>
+          <p>
+            <a href="/multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml">
+              /multi_table?indicators=population_total,govt_revenue_pc_gdp&entities=UG&start_year=2015&end_year=2015&format=xml
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <script async src="/bootstrap/dist/js/bootstrap.min.js" />
   </body>
 </html>
