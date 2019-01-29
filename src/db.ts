@@ -102,7 +102,7 @@ export class DB {
   }
 
   json2csv(json: object | object[]): string {
-    const keys = Array.isArray(json) ? [...new Set(json.map(e => Object.keys(e)).reduce((prev, curr) => prev.concat(curr)))] : Object.keys(json);
+    const keys = Object.keys(Array.isArray(json) ? json[0] : json);
     const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
     const csvStringifier = createCsvStringifier({
         header: keys.map(key => ({ id: key, title: key }))
