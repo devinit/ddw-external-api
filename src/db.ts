@@ -123,6 +123,8 @@ export class DB {
       data.message = 'Access is forbidden.';
     }
 
-    return this.formatData([data], format, true);
+    return this.formatData([ data ], format, true);
   }
 }
+
+export const dbHandler: DB = new DB();
