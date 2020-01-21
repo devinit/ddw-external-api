@@ -7,11 +7,26 @@ export const typeDefs = gql`
     """
     geocode: String
     year: Int
-    value: Int
+    value: Float
     name: String
   }
 
+  type DataResult {
+    nextPage: Int!
+    results: [Data]!
+  }
+
   type Query {
-    data: [Data]
+    data(
+      indicators: [String]!
+      geocodes: [String]
+      startYear: Int
+      endYear: Int
+      page: Int
+      """
+      Default == 100
+      """
+      limit: Int
+    ): DataResult
   }
 `;

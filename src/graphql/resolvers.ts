@@ -1,7 +1,12 @@
-export const resolvers = {
+import { IResolvers } from 'apollo-server-express';
+import { DataQueryArguments, fetchData } from './data';
+
+export const resolvers: IResolvers = {
   Query: {
-    data: () => [
-      { geocode: 'UG', year: 2014, value: 34, name: 'Kampala' }
-    ]
+    data: async (_parent, arg: DataQueryArguments) => {
+      const results = await fetchData(arg);
+
+      return results;
+    }
   }
 };
