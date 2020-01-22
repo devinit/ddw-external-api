@@ -34,6 +34,12 @@ interface DistrictData extends DataItem {
   district_id: string;
 }
 
+type Data = CountryData | DistrictData;
+interface GeoData extends DataItem {
+  geocode: string;
+  indicator?: string;
+}
+
 const getEntitiesFromGeoCodes = (geocodes: string[]): string[] => {
   return geocodes.map(code => {
     const splitCodes = code.split('.');
@@ -45,11 +51,6 @@ const getEntitiesFromGeoCodes = (geocodes: string[]): string[] => {
   });
 };
 
-type Data = CountryData | DistrictData;
-interface GeoData extends DataItem {
-  geocode: string;
-}
-
 const getGeoIDField = (item: Data): string => {
   if ((item as CountryData).di_id) {
     return 'di_id';
@@ -60,19 +61,21 @@ const getGeoIDField = (item: Data): string => {
   return '';
 };
 
-const mapDataEntitiesToGeoCodes = (data: Data[], geocodes: string[], entities: string[]) => {
-  const hasCodes = !!geocodes.length;
+const mapDataEntitiesToGeoCodes =
+  (indicator: string, data: Data[], geocodes: string[], entities: string[]): GeoData[] => {
+    const hasCodes = !!geocodes.length;
 
-  return data.map((item: any): GeoData => {
-    const geoName = getGeoIDField(item);
+    return data.map((item: any): GeoData => {
+      const geoName = getGeoIDField(item);
 
-    return {
-      name: item.name,
-      value: item.value,
-      year: item.year,
-      geocode: hasCodes && geoName ? geocodes[entities.indexOf(item[geoName])] : item[geoName]
-    };
-  });
+      return {
+        indicator,
+        name: item.name,
+        value: item.value,
+        year: item.year,
+        geocode: hasCodes && geoName ? geocodes[entities.indexOf(item[geoName])] : item[geoName]
+      };
+    });
 };
 
 export const fetchFromIndicator =
@@ -94,7 +97,7 @@ export const fetchFromIndicator =
         offset
       });
 
-      return mapDataEntitiesToGeoCodes(data, geocodes || [], entityArray);
+      return mapDataEntitiesToGeoCodes(indicator, data, geocodes || [], entityArray);
     } catch (error) {
       throw new ApolloError(error);
     }

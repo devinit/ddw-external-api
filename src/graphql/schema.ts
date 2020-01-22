@@ -9,6 +9,7 @@ export const typeDefs = gql`
     year: Int
     value: Float
     name: String
+    indicator: String
   }
 
   type DataResult {
