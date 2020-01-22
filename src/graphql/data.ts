@@ -114,16 +114,10 @@ export const fetchData = async ({ indicators, geocodes, page, limit, startYear, 
     };
     const data = await fetchFromIndicator(options);
 
-    return {
-      nextPage: null, // TODO: handle pagination
-      results: [ { indicator: indicators[0], data } ]
-    };
+    return [ { indicator: indicators[0], data } ];
   }
 
-  return {
-    nextPage: null, // TODO: handle pagination
-    results: [
-      { indicator: 'testing', data: [ { geocode: 'UG', year: 2014, value: 34, name: 'Kampala' } ] }
-    ]
-  };
+  return [
+    { indicator: 'testing', data: [ { geocode: 'UG', year: 2014, value: 34, name: 'Kampala' } ] }
+  ];
 };

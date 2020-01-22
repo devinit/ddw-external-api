@@ -17,11 +17,6 @@ export const typeDefs = gql`
     data: [Data]!
   }
 
-  type DataResult {
-    nextPage: Int!
-    results: [IndicatorData]!
-  }
-
   type Query {
     data(
       indicators: [String]!
@@ -33,6 +28,6 @@ export const typeDefs = gql`
       Default == 100
       """
       limit: Int
-    ): DataResult
+    ): [IndicatorData]!
   }
 `;
