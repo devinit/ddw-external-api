@@ -12,9 +12,14 @@ export const typeDefs = gql`
     indicator: String
   }
 
+  type IndicatorData {
+    indicator: String!
+    data: [Data]!
+  }
+
   type DataResult {
     nextPage: Int!
-    results: [Data]!
+    results: [IndicatorData]!
   }
 
   type Query {

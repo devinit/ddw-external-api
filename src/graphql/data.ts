@@ -61,15 +61,13 @@ const getGeoIDField = (item: Data): string => {
   return '';
 };
 
-const mapDataEntitiesToGeoCodes =
-  (indicator: string, data: Data[], geocodes: string[], entities: string[]): GeoData[] => {
+const mapDataEntitiesToGeoCodes = (data: Data[], geocodes: string[], entities: string[]): GeoData[] => {
     const hasCodes = !!geocodes.length;
 
     return data.map((item: any): GeoData => {
       const geoName = getGeoIDField(item);
 
       return {
-        indicator,
         name: item.name,
         value: item.value,
         year: item.year,
@@ -97,7 +95,7 @@ export const fetchFromIndicator =
         offset
       });
 
-      return mapDataEntitiesToGeoCodes(indicator, data, geocodes || [], entityArray);
+      return mapDataEntitiesToGeoCodes(data, geocodes || [], entityArray);
     } catch (error) {
       throw new ApolloError(error);
     }
@@ -118,14 +116,14 @@ export const fetchData = async ({ indicators, geocodes, page, limit, startYear, 
 
     return {
       nextPage: null, // TODO: handle pagination
-      results: data
+      results: [ { indicator: indicators[0], data } ]
     };
   }
 
   return {
     nextPage: null, // TODO: handle pagination
     results: [
-      { geocode: 'UG', year: 2014, value: 34, name: 'Kampala' }
+      { indicator: 'testing', data: [ { geocode: 'UG', year: 2014, value: 34, name: 'Kampala' } ] }
     ]
   };
 };
