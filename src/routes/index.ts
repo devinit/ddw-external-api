@@ -1,11 +1,10 @@
 import { Application, Request, Response } from 'express';
-import { DB } from '../db';
+import { dbHandler } from '../db';
 import { join } from 'path';
 import { forbiddenTables } from '../utils';
 
 type ResponseFormat = 'json' | 'csv' | 'xml';
 export class Routes {
-  dbHandler: DB = new DB();
 
   init(app: Application): void {
     app.route('/')
@@ -18,10 +17,10 @@ export class Routes {
         if (forbiddenTables.indexOf(req.query.indicator) > -1) {
           this.sendError(res, { code: '403' }, req.query.format);
         } else {
-          this.dbHandler.getColumnNames(req.query.indicator)
+          dbHandler.getColumnNames(req.query.indicator)
             .then((columnNames) => {
               const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset } = req.query;
-              this.dbHandler.fetchData({
+              dbHandler.fetchData({
                 columnNames,
                 indicator,
                 entities,
@@ -48,9 +47,9 @@ export class Routes {
         const { entities, start_year: startYear, end_year: endYear, limit, offset } = req.query;
         const indicators: string[] = req.query.indicators.split(',');
         const validIndicators = indicators.filter((indicator) => forbiddenTables.indexOf(indicator) === -1);
-        this.dbHandler.getColumnNames(validIndicators[0])
+        dbHandler.getColumnNames(validIndicators[0])
           .then((columnNames) => {
-            this.dbHandler.fetchData({
+            dbHandler.fetchData({
               columnNames,
               indicator: validIndicators,
               entities,
@@ -83,7 +82,7 @@ export class Routes {
 
     app.route('/all_tables')
       .get((req: Request, res: Response) => {
-        this.dbHandler.allTablesInfo()
+        dbHandler.allTablesInfo()
           .then((data) => {
             this.sendData(res, data, req.query.format);
           }).catch((error) => {
@@ -93,7 +92,7 @@ export class Routes {
 
     app.route('/meta_data')
       .get((req: Request, res: Response) => {
-        this.dbHandler.fetchMetaData()
+        dbHandler.fetchMetaData()
           .then((data) => {
             this.sendData(res, data, req.query.format);
           }).catch((error) => {
@@ -107,13 +106,13 @@ export class Routes {
     const fileName = indicator ? indicator : 'download';
     res.setHeader('Content-disposition', 'inline; filename=' + fileName + '.' + fileExtension);
     res.setHeader('Content-Type', 'application/' + fileExtension);
-    res.status(200).send(this.dbHandler.formatData(data, format));
+    res.status(200).send(dbHandler.formatData(data, format));
   }
 
   sendError(res: Response, error: { code: string }, format?: ResponseFormat): void {
     const fileExtension = format ? format : 'json';
     res.setHeader('Content-disposition', 'inline; filename=error.' + fileExtension);
     res.setHeader('Content-Type', 'application/' + fileExtension);
-    res.status(200).send(this.dbHandler.formatError(error, format));
+    res.status(200).send(dbHandler.formatError(error, format));
   }
 }

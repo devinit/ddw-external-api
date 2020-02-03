@@ -29,11 +29,13 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "apollo-server-express": "^2.9.16",
     "body-parser": "^1.18.3",
     "bootstrap": "^4.2.1",
     "csv-writer": "^1.2.0",
     "ddos": "^0.1.31",
     "express": "^4.16.4",
+    "graphql": "^14.5.8",
     "pg-promise": "^8.5.3",
     "xml-js": "^1.6.8"
   }
