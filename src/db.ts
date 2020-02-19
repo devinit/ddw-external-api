@@ -13,13 +13,32 @@ interface FetchOptions {
   limit?: number;
   offset?: number;
 }
+
+const initOptions = {
+  schema(dc: any) {
+    //console.log(this);
+    if ((dc as string).includes('kenya')) {
+      return "spotlight_on_kenya_2017";
+    }
+    else if ((dc as string).includes('uganda')) {
+      return "spotlight_on_uganda_2017";
+    }
+    else {
+      return ['spotlight_on_uganda_2017', 'spotlight_on_kenya_2017', 'data_series', 'reference', 'fact', 'dimension', 'donor_profile', 'recipient_profile', 'multilateral_profile', 'south_south_cooperation'];
+    }
+  }
+};
+
 export class DB {
-  pgPromise: IMain = PGPromise();
+  pgPromise: IMain = PGPromise(initOptions);
   configs: string = fs.readFileSync('src/db.conf', 'utf8').trim();
   db: IDatabase<any>;
+  //currentSchema: string = null;
 
-  constructor() {
-    this.db = this.pgPromise(this.configs);
+  constructor(schemas: string) {
+    //console.log(this.pgPromise);
+    this.db = this.pgPromise(this.configs, schemas);
+    //console.log(this.db);
   }
 
   getColumnNames(indicator: string): Promise<string[]> {
@@ -127,4 +146,7 @@ export class DB {
   }
 }
 
-export const dbHandler: DB = new DB();
+// I hard typed the below while testing. Since we shall not know the schema before hand, the module using this
+// class will need to instantiate it with the schema hence the deprecation of the below line
+//export const dbHandler: DB = new DB("uganda");
+

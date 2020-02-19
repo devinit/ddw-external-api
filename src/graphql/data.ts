@@ -1,6 +1,8 @@
-import { dbHandler } from '../db';
+import * as dbH from '../db';
 import { forbiddenTables } from '../utils';
 import { ApolloError, UserInputError } from 'apollo-server-express';
+
+var dbHandler: dbH.DB;
 
 interface CommonQueryOptions {
   geocodes?: string[];
@@ -46,6 +48,8 @@ interface IndicatorData {
   data: GeoData[];
 }
 
+//declare var dbHandler: dbH.DB;
+
 /**
  * Splits Geo Code into their respective entities
  * e.g from UG.d102 to d102
@@ -74,6 +78,35 @@ const getGeoIDField = (item: Data): string => {
   }
 
   return '';
+};
+
+export const fetchData = async ({ indicators, geocodes, page, limit, startYear, endYear }: DataQueryArguments) => {
+const schemas = Array.isArray(indicators)?indicators.toString():indicators;
+dbHandler = new dbH.DB(schemas);
+  const defaultLimit = 100;
+  const commonOptions: CommonQueryOptions = {
+    geocodes,
+    limit: limit || defaultLimit,
+    offset: page ? (page - 1) * (limit || defaultLimit) + 1 : undefined,
+    startYear,
+    endYear
+  };
+
+  if (indicators.length === 1) {
+    const indicatorData = await fetchFromIndicator({
+      indicator: indicators[0],
+      ...commonOptions
+    });
+
+    return [ { indicator: indicators[0], data: indicatorData } ];
+  }
+
+  const multiIndicatorData = await fetchFromIndicators({
+    indicators,
+    ...commonOptions
+  });
+
+  return multiIndicatorData;
 };
 
 /**
@@ -174,29 +207,4 @@ const fetchFromIndicators =
     return groupMultiIndicatorData(data, indicators, geocodes || [], entityArray);
 };
 
-export const fetchData = async ({ indicators, geocodes, page, limit, startYear, endYear }: DataQueryArguments) => {
-  const defaultLimit = 100;
-  const commonOptions: CommonQueryOptions = {
-    geocodes,
-    limit: limit || defaultLimit,
-    offset: page ? (page - 1) * (limit || defaultLimit) + 1 : undefined,
-    startYear,
-    endYear
-  };
 
-  if (indicators.length === 1) {
-    const indicatorData = await fetchFromIndicator({
-      indicator: indicators[0],
-      ...commonOptions
-    });
-
-    return [ { indicator: indicators[0], data: indicatorData } ];
-  }
-
-  const multiIndicatorData = await fetchFromIndicators({
-    indicators,
-    ...commonOptions
-  });
-
-  return multiIndicatorData;
-};
