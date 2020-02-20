@@ -8,7 +8,13 @@
     "grunt": "grunt",
     "dev": "npm i && npm run grunt && ts-node-dev --compilerOptions '{ \"strict\": false }' ./src/server.ts",
     "start": "node ./dist/server.js",
-    "prod": "npm run grunt && npm run build && npm run start"
+    "prod": "npm run grunt && npm run build && npm run start",
+    "lint": "tslint -c tslint.json 'src/**/*.ts' && tsc --noEmit"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint"
+    }
   },
   "keywords": [],
   "author": "",
@@ -23,7 +29,7 @@
     "grunt-contrib-copy": "^1.0.0",
     "ts-node": "^7.0.1",
     "ts-node-dev": "^1.0.0-pre.32",
-    "tslint": "^5.20.1",
+    "tslint": "^6.0.0",
     "tslint-eslint-rules": "^5.4.0",
     "tslint-microsoft-contrib": "^6.0.0",
     "typescript": "^3.2.2"
@@ -36,6 +42,7 @@
     "ddos": "^0.1.31",
     "express": "^4.16.4",
     "graphql": "^14.5.8",
+    "husky": "^4.2.3",
     "pg-promise": "^8.5.3",
     "xml-js": "^1.6.8"
   }
