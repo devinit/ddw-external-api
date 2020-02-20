@@ -48,8 +48,6 @@ interface IndicatorData {
   data: GeoData[];
 }
 
-//declare var dbHandler: dbH.DB;
-
 /**
  * Splits Geo Code into their respective entities
  * e.g from UG.d102 to d102

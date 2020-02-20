@@ -7,7 +7,6 @@ var dbHandler: dbH.DB;
 
 type ResponseFormat = 'json' | 'csv' | 'xml';
 export class Routes {
-  //dbHandler!: dbH.DB;
   init(app: Application): void {
     app.route('/')
       .get((_req: Request, res: Response) => {
