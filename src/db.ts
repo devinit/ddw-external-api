@@ -30,11 +30,12 @@ const initOptions = {
 
 export class DB {
 
-/**
- * The dbs static variable will store each connection made per schema so as not to recreate them.
- * This helps avoid the connection already made error.IDatabase
- * It is inspired by the singleton pattern
- */
+  /**
+   * The dbs static variable will store each connection made per schema so as not to recreate them.
+   * This helps avoid the connection already made error.IDatabase
+   * It is inspired by the singleton pattern
+   */
+
   private static dbs = new Map();
   pgPromise: IMain = PGPromise(initOptions);
   configs: string = fs.readFileSync('src/db.conf', 'utf8').trim();
