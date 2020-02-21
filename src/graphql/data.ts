@@ -116,6 +116,9 @@ const getMetaData = (data: any): string => {
   if (data.budget_type) {
     meta.budgetType = data.budget_type;
   }
+  if (data.value_ncu) {
+    meta.valueLocalCurrency = parseFloat(data.value_ncu);
+  }
 
   return JSON.stringify(meta);
 };
