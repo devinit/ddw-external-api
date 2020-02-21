@@ -2,7 +2,7 @@ import * as dbH from '../db';
 import { forbiddenTables } from '../utils';
 import { ApolloError, UserInputError } from 'apollo-server-express';
 
-var dbHandler: dbH.DB;
+let dbHandler: dbH.DB;
 
 interface CommonQueryOptions {
   geocodes?: string[];
@@ -79,8 +79,8 @@ const getGeoIDField = (item: Data): string => {
 };
 
 export const fetchData = async ({ indicators, geocodes, page, limit, startYear, endYear }: DataQueryArguments) => {
-const schemas = Array.isArray(indicators)?indicators.toString():indicators;
-dbHandler = new dbH.DB(schemas);
+  const schemas = Array.isArray(indicators) ? indicators.toString() : indicators;
+  dbHandler = new dbH.DB(schemas);
   const defaultLimit = 100;
   const commonOptions: CommonQueryOptions = {
     geocodes,
@@ -204,5 +204,3 @@ const fetchFromIndicators =
 
     return groupMultiIndicatorData(data, indicators, geocodes || [], entityArray);
 };
-
-

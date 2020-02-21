@@ -3,7 +3,7 @@ import * as dbH from '../db';
 import { join } from 'path';
 import { forbiddenTables } from '../utils';
 
-var dbHandler: dbH.DB;
+let dbHandler: dbH.DB;
 
 type ResponseFormat = 'json' | 'csv' | 'xml';
 export class Routes {
@@ -85,7 +85,7 @@ export class Routes {
 
     app.route('/all_tables')
       .get((req: Request, res: Response) => {
-        dbHandler = new dbH.DB("all");
+        dbHandler = new dbH.DB('all');
         dbHandler.allTablesInfo()
           .then((data) => {
             this.sendData(res, data, req.query.format);
@@ -96,7 +96,7 @@ export class Routes {
 
     app.route('/meta_data')
       .get((req: Request, res: Response) => {
-        dbHandler = new dbH.DB("all");
+        dbHandler = new dbH.DB('all');
         dbHandler.fetchMetaData()
           .then((data) => {
             this.sendData(res, data, req.query.format);

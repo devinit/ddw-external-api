@@ -17,42 +17,36 @@ interface FetchOptions {
 const initOptions = {
   schema(dc: any) {
     if ((dc as string).includes('kenya')) {
-      return "spotlight_on_kenya_2017";
-    }
-    else if ((dc as string).includes('uganda')) {
-      return "spotlight_on_uganda_2017";
-    }
-    else if (dc === null){
+      return 'spotlight_on_kenya_2017';
+    } else if ((dc as string).includes('uganda')) {
+      return 'spotlight_on_uganda_2017';
+    } else if (dc === null) {
         return dc;
-    }
-    else {
-      return ['spotlight_on_uganda_2017', 'spotlight_on_kenya_2017', 'data_series', 'reference', 'fact', 'dimension', 'donor_profile', 'recipient_profile', 'multilateral_profile', 'south_south_cooperation'];
+    } else {
+      return [ 'spotlight_on_uganda_2017', 'spotlight_on_kenya_2017', 'data_series', 'reference', 'fact', 'dimension', 'donor_profile', 'recipient_profile', 'multilateral_profile', 'south_south_cooperation' ];
     }
   }
 };
 
 export class DB {
+
+/**
+ * The dbs static variable will store each connection made per schema so as not to recreate them.
+ * This helps avoid the connection already made error.IDatabase
+ * It is inspired by the singleton pattern
+ */
+  private static dbs = new Map();
   pgPromise: IMain = PGPromise(initOptions);
   configs: string = fs.readFileSync('src/db.conf', 'utf8').trim();
   db: IDatabase<any>;
 
-  /**
-   *The dbs static variable will store each connection made per schema so as not to recreate them.
-   *This helps avoid the connection already made error.IDatabase
-   *It is inspired by the singleton pattern
-   */
-
-  private static dbs = new Map();
-
   constructor(schemas: string | null) {
-    if(schemas === null){
+    if (schemas === null) {
         this.db = this.pgPromise(this.configs, schemas);
-    }
-    else if (DB.dbs.get(schemas) === undefined){
+    } else if (DB.dbs.get(schemas) === undefined) {
         DB.dbs.set(schemas, this.pgPromise(this.configs, schemas));
         this.db = DB.dbs.get(schemas);
-    }
-    else{
+    } else {
         this.db = DB.dbs.get(schemas);
     }
   }
@@ -161,5 +155,3 @@ export class DB {
     return this.formatData([ data ], format, true);
   }
 }
-
-
