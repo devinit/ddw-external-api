@@ -1,6 +1,8 @@
-import { dbHandler } from '../db';
+import * as dbH from '../db';
 import { forbiddenTables } from '../utils';
 import { ApolloError, UserInputError } from 'apollo-server-express';
+
+let dbHandler: dbH.DB;
 
 interface CommonQueryOptions {
   geocodes?: string[];
@@ -76,15 +78,49 @@ const getGeoIDField = (item: Data): string => {
   return '';
 };
 
+export const fetchData = async ({ indicators, geocodes, page, limit, startYear, endYear }: DataQueryArguments) => {
+  const schemas = Array.isArray(indicators) ? indicators.toString() : indicators;
+  dbHandler = new dbH.DB(schemas);
+  const defaultLimit = 100;
+  const commonOptions: CommonQueryOptions = {
+    geocodes,
+    limit: limit || defaultLimit,
+    offset: page ? (page - 1) * (limit || defaultLimit) + 1 : undefined,
+    startYear,
+    endYear
+  };
+
+  if (indicators.length === 1) {
+    const indicatorData = await fetchFromIndicator({
+      indicator: indicators[0],
+      ...commonOptions
+    });
+
+    return [ { indicator: indicators[0], data: indicatorData } ];
+  }
+
+  const multiIndicatorData = await fetchFromIndicators({
+    indicators,
+    ...commonOptions
+  });
+
+  return multiIndicatorData;
+};
+
 /**
  * Use to add any sort of extra information to the data - returns a JSON string
  * @param data - the date item from the DDW
  */
 const getMetaData = (data: any): string => {
   const meta: { [key: string]: any } = {};
-  if (data.budget_type) {
-    meta.budgetType = data.budget_type;
+  const { budget_type, value_ncu, value, name, year, district_id, di_id, ...extra } = data;
+  if (budget_type) {
+    meta.budgetType = budget_type;
   }
+  if (value_ncu) {
+    meta.valueLocalCurrency = parseFloat(value_ncu);
+  }
+  meta.extra = extra;
 
   return JSON.stringify(meta);
 };
@@ -123,6 +159,7 @@ export const fetchFromIndicator =
       const entityArray = geocodes ? getEntitiesFromGeoCodes(geocodes) : [];
       const entities = entityArray.join(',');
       const columnNames = await dbHandler.getColumnNames(indicator);
+
       const data = await dbHandler.fetchData({
         columnNames,
         indicator,
@@ -172,31 +209,4 @@ const fetchFromIndicators =
     });
 
     return groupMultiIndicatorData(data, indicators, geocodes || [], entityArray);
-};
-
-export const fetchData = async ({ indicators, geocodes, page, limit, startYear, endYear }: DataQueryArguments) => {
-  const defaultLimit = 100;
-  const commonOptions: CommonQueryOptions = {
-    geocodes,
-    limit: limit || defaultLimit,
-    offset: page ? (page - 1) * (limit || defaultLimit) + 1 : undefined,
-    startYear,
-    endYear
-  };
-
-  if (indicators.length === 1) {
-    const indicatorData = await fetchFromIndicator({
-      indicator: indicators[0],
-      ...commonOptions
-    });
-
-    return [ { indicator: indicators[0], data: indicatorData } ];
-  }
-
-  const multiIndicatorData = await fetchFromIndicators({
-    indicators,
-    ...commonOptions
-  });
-
-  return multiIndicatorData;
 };
