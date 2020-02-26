@@ -113,12 +113,14 @@ export const fetchData = async ({ indicators, geocodes, page, limit, startYear, 
  */
 const getMetaData = (data: any): string => {
   const meta: { [key: string]: any } = {};
-  if (data.budget_type) {
-    meta.budgetType = data.budget_type;
+  const { budget_type, value_ncu, value, name, year, district_id, di_id, ...extra } = data;
+  if (budget_type) {
+    meta.budgetType = budget_type;
   }
-  if (data.value_ncu) {
-    meta.valueLocalCurrency = parseFloat(data.value_ncu);
+  if (value_ncu) {
+    meta.valueLocalCurrency = parseFloat(value_ncu);
   }
+  meta.extra = extra;
 
   return JSON.stringify(meta);
 };
@@ -157,6 +159,7 @@ export const fetchFromIndicator =
       const entityArray = geocodes ? getEntitiesFromGeoCodes(geocodes) : [];
       const entities = entityArray.join(',');
       const columnNames = await dbHandler.getColumnNames(indicator);
+
       const data = await dbHandler.fetchData({
         columnNames,
         indicator,
