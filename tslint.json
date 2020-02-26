@@ -21,7 +21,7 @@
         ],
         "member-ordering": [
             true,
-            "variables-before-functions"
+            {"order": "fields-first"}
         ],
         "no-arg": true,
         "no-bitwise": true,
@@ -51,8 +51,7 @@
         ],
         "quotemark": [
             true,
-            "single",
-            "jsx-double"
+            "single"
         ],
         "semicolon": [
             true,
@@ -139,19 +138,12 @@
             }
         ],
         "curly": true,
-        "jsx-curly-spacing": [
-            true,
-            "always"
-        ],
-        "jsx-no-multiline-js": false,
         "arrow-parens": false,
-        "jsx-boolean-value": false,
         "no-object-literal-type-assertion": false,
         "object-literal-sort-keys": false,
         "array-type": false,
         "no-submodule-imports": false,
         "no-implicit-dependencies": false,
-        "jsx-wrap-multiline": false,
         "newline-before-return": true,
         "max-line-length": [
             true,
@@ -172,8 +164,7 @@
         ],
         "quotemark": [
             true,
-            "single",
-            "jsx-double"
+            "single"
         ]
     }
 }

@@ -1,11 +1,12 @@
 import { Application, Request, Response } from 'express';
-import { dbHandler } from '../db';
+import * as dbH from '../db';
 import { join } from 'path';
 import { forbiddenTables } from '../utils';
 
+let dbHandler: dbH.DB;
+
 type ResponseFormat = 'json' | 'csv' | 'xml';
 export class Routes {
-
   init(app: Application): void {
     app.route('/')
       .get((_req: Request, res: Response) => {
@@ -17,6 +18,7 @@ export class Routes {
         if (forbiddenTables.indexOf(req.query.indicator) > -1) {
           this.sendError(res, { code: '403' }, req.query.format);
         } else {
+          dbHandler = new dbH.DB(req.query.indicator);
           dbHandler.getColumnNames(req.query.indicator)
             .then((columnNames) => {
               const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset } = req.query;
@@ -47,6 +49,7 @@ export class Routes {
         const { entities, start_year: startYear, end_year: endYear, limit, offset } = req.query;
         const indicators: string[] = req.query.indicators.split(',');
         const validIndicators = indicators.filter((indicator) => forbiddenTables.indexOf(indicator) === -1);
+        dbHandler = new dbH.DB(req.query.indicators);
         dbHandler.getColumnNames(validIndicators[0])
           .then((columnNames) => {
             dbHandler.fetchData({
@@ -82,6 +85,7 @@ export class Routes {
 
     app.route('/all_tables')
       .get((req: Request, res: Response) => {
+        dbHandler = new dbH.DB('all');
         dbHandler.allTablesInfo()
           .then((data) => {
             this.sendData(res, data, req.query.format);
@@ -92,6 +96,7 @@ export class Routes {
 
     app.route('/meta_data')
       .get((req: Request, res: Response) => {
+        dbHandler = new dbH.DB('all');
         dbHandler.fetchMetaData()
           .then((data) => {
             this.sendData(res, data, req.query.format);
