@@ -17,11 +17,11 @@ export class Routes {
       .get((req: Request, res: Response) => {
         if (forbiddenTables.indexOf(req.query.indicator) > -1) {
           this.sendError(res, { code: '403' }, req.query.format);
-        } else {
+        } else {       
           dbHandler = new dbH.DB(req.query.indicator);
           dbHandler.getColumnNames(req.query.indicator)
             .then((columnNames) => {
-              const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset } = req.query;
+              const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset, filters } = req.query;
               dbHandler.fetchData({
                 columnNames,
                 indicator,
@@ -29,7 +29,8 @@ export class Routes {
                 startYear,
                 endYear,
                 limit,
-                offset
+                offset,
+                filters
               })
                 .then((data) => {
                   this.sendData(res, data, req.query.format, req.query.indicator);
