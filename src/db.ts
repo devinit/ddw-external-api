@@ -20,7 +20,7 @@ interface FetchOptions {
   endYear?: number;
   limit?: number;
   offset?: number;
-  filters?: string;
+  filters?: FilterOptions[];
 }
 
 const initOptions = {
@@ -79,15 +79,21 @@ export class DB {
   }
 
   fetchFromTable(options: FetchOptions): Promise<any> {
-    const { columnNames, indicator, entities, startYear = 0, endYear = 9999, limit = 1000000, offset = 0, filters = "" } = options;
+    const { columnNames, indicator, entities, startYear = 0, endYear = 9999, limit = 1000000, offset = 0, filters = [] } = options;
     let entityName = '';
     let entityTable = 'di_entity';
     let filter: FilterOptions[] = [];
     try{
-      filter = JSON.parse(filters);
+      if(!Array.isArray(filters)){
+        console.log("Not Array");
+        filter = JSON.parse(filters);
+      }else{
+        filter = filters;
+;      }  
     }catch(e){
       filter = []
     }
+    console.log(filter);
     let dynamicWhere: string = "";
     let parameters = [];
     let paramIndex = 1;

@@ -1,6 +1,13 @@
 import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
+  input Filter {
+    name: String!
+    condition: String!
+    value: String!
+    operator: String
+  }
+
   type Data {
     """
     Format can be [CountryCode].[DistrictCode].[CountyCode] e.g UG.d102 == Kampala
@@ -28,6 +35,7 @@ export const typeDefs = gql`
       Default == 100
       """
       limit: Int
+      filters: [Filter!]
     ): [IndicatorData]!
   }
 `;

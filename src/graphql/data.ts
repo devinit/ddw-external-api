@@ -12,15 +12,23 @@ interface CommonQueryOptions {
   offset?: number;
 }
 
+interface FilterOptions{
+  name: string;
+  condition: string;
+  value: string | number;
+  operator: string;
+}
+
 export interface DataQueryOptions extends CommonQueryOptions {
   indicators: string[];
+  filters?: FilterOptions[];
 }
 
 export interface DataQueryArguments extends DataQueryOptions {
   page?: number;
 }
 
-type SingleIndicatorQueryOptions = CommonQueryOptions & { indicator: string };
+type SingleIndicatorQueryOptions = CommonQueryOptions & { indicator: string, filters: FilterOptions[]};
 type MultiIndicatorQueryOptions = CommonQueryOptions & { indicators: string[] };
 
 interface DataItem {
@@ -78,7 +86,7 @@ const getGeoIDField = (item: Data): string => {
   return '';
 };
 
-export const fetchData = async ({ indicators, geocodes, page, limit, startYear, endYear }: DataQueryArguments) => {
+export const fetchData = async ({ indicators, geocodes, page, limit, startYear, endYear, filters }: DataQueryArguments) => {
   const schemas = Array.isArray(indicators) ? indicators.toString() : indicators;
   dbHandler = new dbH.DB(schemas);
   const defaultLimit = 100;
@@ -90,9 +98,14 @@ export const fetchData = async ({ indicators, geocodes, page, limit, startYear, 
     endYear
   };
 
+  if(filters === undefined){
+    filters = [];
+  }
+
   if (indicators.length === 1) {
     const indicatorData = await fetchFromIndicator({
       indicator: indicators[0],
+      filters,
       ...commonOptions
     });
 
@@ -151,10 +164,16 @@ const mapDataEntitiesToGeoCodes = (data: Data[], geocodes: string[], entities: s
 };
 
 export const fetchFromIndicator =
-  async ({ indicator, geocodes, startYear, endYear, limit, offset }: SingleIndicatorQueryOptions) => {
+  async ({ indicator, geocodes, startYear, endYear, limit, offset, filters }: SingleIndicatorQueryOptions) => {
     if (forbiddenTables.indexOf(indicator) > -1) {
       throw new UserInputError('invalid indicator');
     }
+    //var filterStringfied = "";
+    //try{
+    //  filterStringfied = JSON.stringify(filters);
+    //}catch(e){
+    //  filterStringfied = "[]"
+    //}
     try {
       const entityArray = geocodes ? getEntitiesFromGeoCodes(geocodes) : [];
       const entities = entityArray.join(',');
@@ -167,7 +186,8 @@ export const fetchFromIndicator =
         startYear,
         endYear,
         limit,
-        offset
+        offset,
+        filters
       });
 
       return mapDataEntitiesToGeoCodes(data, geocodes || [], entityArray);
