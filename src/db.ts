@@ -93,14 +93,12 @@ export class DB {
     }catch(e){
       filter = []
     }
-    console.log(filter);
     let dynamicWhere: string = "";
     let parameters = [];
     let paramIndex = 1;
 
     // We build the where clause here
     for(let filt of filter){
-      console.log(filt.name);
       if(columnNames.indexOf(filt.name) > -1 && conditionalOperators.indexOf(filt.condition) > -1){
         if(filt.operator === undefined || andOrOperators.indexOf(filt.operator) == -1){
           filt.operator = "AND";

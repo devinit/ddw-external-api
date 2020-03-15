@@ -22,7 +22,6 @@ export class Routes {
           dbHandler.getColumnNames(req.query.indicator)
             .then((columnNames) => {
               const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset, filters } = req.query;
-              //console.log(filters);
               dbHandler.fetchData({
                 columnNames,
                 indicator,
