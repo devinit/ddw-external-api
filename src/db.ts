@@ -85,7 +85,6 @@ export class DB {
     let filter: FilterOptions[] = [];
     try{
       if(!Array.isArray(filters)){
-        console.log("Not Array");
         filter = JSON.parse(filters);
       }else{
         filter = filters;
