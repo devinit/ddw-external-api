@@ -1,3 +1,4 @@
+// tslint:disable max-line-length
 import { Application, Request, Response } from 'express';
 import * as dbH from '../db';
 import { join } from 'path';
@@ -17,7 +18,7 @@ export class Routes {
       .get((req: Request, res: Response) => {
         if (forbiddenTables.indexOf(req.query.indicator) > -1) {
           this.sendError(res, { code: '403' }, req.query.format);
-        } else {       
+        } else {
           dbHandler = new dbH.DB(req.query.indicator);
           dbHandler.getColumnNames(req.query.indicator)
             .then((columnNames) => {

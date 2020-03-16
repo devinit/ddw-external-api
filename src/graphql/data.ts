@@ -1,3 +1,4 @@
+// tslint:disable max-line-length
 import * as dbH from '../db';
 import { forbiddenTables } from '../utils';
 import { ApolloError, UserInputError } from 'apollo-server-express';
@@ -12,7 +13,7 @@ interface CommonQueryOptions {
   offset?: number;
 }
 
-interface FilterOptions{
+interface FilterOptions {
   name: string;
   condition: string;
   value: string | number;
@@ -98,7 +99,7 @@ export const fetchData = async ({ indicators, geocodes, page, limit, startYear, 
     endYear
   };
 
-  if(filters === undefined){
+  if (filters === undefined) {
     filters = [];
   }
 
@@ -168,12 +169,6 @@ export const fetchFromIndicator =
     if (forbiddenTables.indexOf(indicator) > -1) {
       throw new UserInputError('invalid indicator');
     }
-    //var filterStringfied = "";
-    //try{
-    //  filterStringfied = JSON.stringify(filters);
-    //}catch(e){
-    //  filterStringfied = "[]"
-    //}
     try {
       const entityArray = geocodes ? getEntitiesFromGeoCodes(geocodes) : [];
       const entities = entityArray.join(',');

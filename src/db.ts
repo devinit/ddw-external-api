@@ -1,11 +1,12 @@
 // tslint:disable max-line-length
 import * as fs from 'fs';
+import * as PGPromise from 'pg-promise';
+// tslint:disable-next-line: no-duplicate-imports
 import { IDatabase, IMain } from 'pg-promise';
-import * as PGPromise from 'pg-promise'; // tslint:disable-line:no-duplicate-imports
 import * as convert from 'xml-js';
-import { conditionalOperators, andOrOperators } from './utils';
+import { andOrOperators, conditionalOperators } from './utils';
 
-interface FilterOptions{
+interface FilterOptions {
   name: string;
   condition: string;
   value: string | number;
@@ -29,7 +30,7 @@ const initOptions = {
       return 'spotlight_on_kenya_2017';
     } else if ((dc as string).includes('uganda')) {
       return 'spotlight_on_uganda_2017';
-    } else if (dc === null) {
+    } else if (dc === null || dc === undefined) {
         return dc;
     } else {
       return [ 'spotlight_on_uganda_2017', 'spotlight_on_kenya_2017', 'data_series', 'reference', 'fact', 'dimension', 'donor_profile', 'recipient_profile', 'multilateral_profile', 'south_south_cooperation' ];
@@ -83,39 +84,41 @@ export class DB {
     let entityName = '';
     let entityTable = 'di_entity';
     let filter: FilterOptions[] = [];
-    try{
-      if(!Array.isArray(filters)){
+    try {
+      // tslint:disable-next-line: prefer-conditional-expression
+      if (!Array.isArray(filters)) {
         filter = JSON.parse(filters);
-      }else{
+      } else {
         filter = filters;
-;      }  
-    }catch(e){
-      filter = []
+      }
+    } catch (e) {
+      filter = [];
     }
-    let dynamicWhere: string = "";
-    let parameters = [];
+    let dynamicWhere = '';
+    const parameters = [];
     let paramIndex = 1;
 
     // We build the where clause here
-    for(let filt of filter){
-      if(columnNames.indexOf(filt.name) > -1 && conditionalOperators.indexOf(filt.condition) > -1){
-        if(filt.operator === undefined || andOrOperators.indexOf(filt.operator) == -1){
-          filt.operator = "AND";
+    for (const filt of filter) {
+      if (columnNames.indexOf(filt.name) > -1 && conditionalOperators.indexOf(filt.condition) > -1) {
+        // tslint:disable-next-line: triple-equals
+        if (filt.operator === undefined || andOrOperators.indexOf(filt.operator) == -1) {
+          filt.operator = 'AND';
         }
-        if(paramIndex > 1){
-          dynamicWhere += filt.operator + " " + filt.name + " " + filt.condition + " $" + paramIndex;
-        }else{
-          dynamicWhere += filt.name + " " + filt.condition + " $" + paramIndex;
+        if (paramIndex > 1) {
+          dynamicWhere += filt.operator + ' ' + filt.name + ' ' + filt.condition + ' $' + paramIndex;
+        } else {
+          dynamicWhere += filt.name + ' ' + filt.condition + ' $' + paramIndex;
         }
         parameters.push(filt.value);
         paramIndex++;
       }
     }
     const where = this.pgPromise.as.format(dynamicWhere, parameters);
-    let where1 = "";
+    let where1 = '';
 
-    if(where.length > 1){
-      where1  = " WHERE " + where;
+    if (where.length > 1) {
+      where1 = ' WHERE ' + where;
     }
     if (columnNames.indexOf('di_id') > -1) {
       entityName = 'di_id';
@@ -133,17 +136,18 @@ export class DB {
     } else {
       return this.db.any('SELECT * FROM $1~ $4:raw LIMIT $2 OFFSET $3;', [ indicator, limit, offset, where1 ]);
     }
-    
-    if(where.length > 1){
-      where1  = "AND " + where;
-    } else{
-      where1 = "";
+
+    // tslint:disable-next-line: prefer-conditional-expression
+    if (where.length > 1) {
+      where1 = 'AND ' + where;
+    } else {
+      where1 = '';
     }
     if (columnNames.indexOf('year') > -1) {
       if (entities) {
         const entitiesArray = entities.split(',');
 
-        return this.db.any('SELECT $1~.*, $8~.name FROM $1~ LEFT JOIN $8~ ON $1~.$4~ = $8~.id WHERE year >= $2 AND year <= $3 AND $4~ IN ($5:csv) $9:raw ORDER BY $4~ ASC, year ASC LIMIT $6 OFFSET $7;', [ indicator, startYear, endYear, entityName, entitiesArray, limit, offset, entityTable, where1]);
+        return this.db.any('SELECT $1~.*, $8~.name FROM $1~ LEFT JOIN $8~ ON $1~.$4~ = $8~.id WHERE year >= $2 AND year <= $3 AND $4~ IN ($5:csv) $9:raw ORDER BY $4~ ASC, year ASC LIMIT $6 OFFSET $7;', [ indicator, startYear, endYear, entityName, entitiesArray, limit, offset, entityTable, where1 ]);
       }
 
       return this.db.any('SELECT $1~.*, $7~.name FROM $1~ LEFT JOIN $7~ ON $1~.$4~ = $7~.id WHERE year >= $2 AND year <= $3 $8:raw ORDER BY $4~ ASC, year ASC LIMIT $5 OFFSET $6;', [ indicator, startYear, endYear, entityName, limit, offset, entityTable, where1 ]);
@@ -153,6 +157,7 @@ export class DB {
 
         return this.db.any('SELECT $1~.*, $6~.name FROM $1~ LEFT JOIN $6~ ON $1~.$2~ = $6~.id WHERE $2 IN ($3:csv) ORDER BY $2~ ASC LIMIT $4 OFFSET $5;', [ indicator, entityName, entitiesArray, limit, offset, entityTable, where1 ]);
       }
+
       return this.db.any('SELECT $1~.*, $5~.name FROM $1~ LEFT JOIN $5~ ON $1~.$2~ = $5~.id ORDER BY $2~ ASC LIMIT $3 OFFSET $4;', [ indicator, entityName, limit, offset, entityTable ]);
     }
   }
