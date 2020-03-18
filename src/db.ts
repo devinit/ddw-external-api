@@ -55,8 +55,8 @@ export class DB {
   getColumnNames(indicator: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
       this.db.any('SELECT * FROM $1~ LIMIT 1;', indicator)
-        .then(data => resolve(Object.keys(data[0])))
-        .catch(reject);
+      .then(data => resolve(data.length ? Object.keys(data[0]) : []))
+      .catch(reject);
     });
   }
 
