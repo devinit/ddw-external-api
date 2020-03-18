@@ -14,13 +14,14 @@ interface CommonQueryOptions {
 
 export interface DataQueryOptions extends CommonQueryOptions {
   indicators: string[];
+  filter?: dbH.FilterOptions[][];
 }
 
 export interface DataQueryArguments extends DataQueryOptions {
   page?: number;
 }
 
-type SingleIndicatorQueryOptions = CommonQueryOptions & { indicator: string };
+type SingleIndicatorQueryOptions = CommonQueryOptions & { indicator: string, filter?: dbH.FilterOptions[][] };
 type MultiIndicatorQueryOptions = CommonQueryOptions & { indicators: string[] };
 
 interface DataItem {
@@ -78,7 +79,7 @@ const getGeoIDField = (item: Data): string => {
   return '';
 };
 
-export const fetchData = async ({ indicators, geocodes, page, limit, startYear, endYear }: DataQueryArguments) => {
+export const fetchData = async ({ indicators, geocodes, page, limit, ...options }: DataQueryArguments) => {
   const schemas = Array.isArray(indicators) ? indicators.toString() : indicators;
   dbHandler = new dbH.DB(schemas);
   const defaultLimit = 100;
@@ -86,14 +87,15 @@ export const fetchData = async ({ indicators, geocodes, page, limit, startYear, 
     geocodes,
     limit: limit || defaultLimit,
     offset: page ? (page - 1) * (limit || defaultLimit) + 1 : undefined,
-    startYear,
-    endYear
+    startYear: options.startYear,
+    endYear: options.endYear
   };
 
   if (indicators.length === 1) {
     const indicatorData = await fetchFromIndicator({
       indicator: indicators[0],
-      ...commonOptions
+      ...commonOptions,
+      filter: options.filter
     });
 
     return [ { indicator: indicators[0], data: indicatorData } ];
@@ -151,7 +153,7 @@ const mapDataEntitiesToGeoCodes = (data: Data[], geocodes: string[], entities: s
 };
 
 export const fetchFromIndicator =
-  async ({ indicator, geocodes, startYear, endYear, limit, offset }: SingleIndicatorQueryOptions) => {
+  async ({ indicator, geocodes, startYear, endYear, limit, offset, filter }: SingleIndicatorQueryOptions) => {
     if (forbiddenTables.indexOf(indicator) > -1) {
       throw new UserInputError('invalid indicator');
     }
@@ -167,7 +169,8 @@ export const fetchFromIndicator =
         startYear,
         endYear,
         limit,
-        offset
+        offset,
+        filter
       });
 
       return mapDataEntitiesToGeoCodes(data, geocodes || [], entityArray);

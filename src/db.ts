@@ -4,6 +4,12 @@ import { IDatabase, IMain } from 'pg-promise';
 import * as PGPromise from 'pg-promise'; // tslint:disable-line:no-duplicate-imports
 import * as convert from 'xml-js';
 
+export interface FilterOptions {
+  field: string;
+  operator: '=' | '>=' | '>'; // TODO: add more operators
+  value: string;
+}
+
 interface FetchOptions {
   columnNames: string[];
   indicator: string | string[];
@@ -12,6 +18,7 @@ interface FetchOptions {
   endYear?: number;
   limit?: number;
   offset?: number;
+  filter?: FilterOptions[][];
 }
 
 const initOptions = {
@@ -70,7 +77,7 @@ export class DB {
   }
 
   fetchFromTable(options: FetchOptions): Promise<any> {
-    const { columnNames, indicator, entities, startYear = 0, endYear = 9999, limit = 1000000, offset = 0 } = options;
+    const { columnNames, indicator, entities, startYear = 0, endYear = 9999, limit = 1000000, offset = 0, filter } = options;
     let entityName = '';
     let entityTable = 'di_entity';
 
@@ -92,13 +99,17 @@ export class DB {
     }
 
     if (columnNames.indexOf('year') > -1) {
+      const where = filter && filter.length
+        ? PGPromise.as.format('WHERE year >= $1 AND year <= $2 $3:raw', [ startYear, endYear, this.formatFilters(filter) ])
+        : PGPromise.as.format('WHERE year >= $1 AND year <= $2', [ startYear, endYear ]);
+
       if (entities) {
         const entitiesArray = entities.split(',');
 
-        return this.db.any('SELECT $1~.*, $8~.name FROM $1~ LEFT JOIN $8~ ON $1~.$4~ = $8~.id WHERE year >= $2 AND year <= $3 AND $4~ IN ($5:csv) ORDER BY $4~ ASC, year ASC LIMIT $6 OFFSET $7;', [ indicator, startYear, endYear, entityName, entitiesArray, limit, offset, entityTable ]);
+        return this.db.any('SELECT $1~.*, $6~.name FROM $1~ LEFT JOIN $6~ ON $1~.$2~ = $6~.id $7:raw AND $2~ IN ($3:csv) ORDER BY $2~ ASC, year ASC LIMIT $4 OFFSET $5;', [ indicator, entityName, entitiesArray, limit, offset, entityTable, where ]);
       }
 
-      return this.db.any('SELECT $1~.*, $7~.name FROM $1~ LEFT JOIN $7~ ON $1~.$4~ = $7~.id WHERE year >= $2 AND year <= $3 ORDER BY $4~ ASC, year ASC LIMIT $5 OFFSET $6;', [ indicator, startYear, endYear, entityName, limit, offset, entityTable ]);
+      return this.db.any('SELECT $1~.*, $5~.name FROM $1~ LEFT JOIN $5~ ON $1~.$2~ = $5~.id $6:raw ORDER BY $2~ ASC, year ASC LIMIT $3 OFFSET $4;', [ indicator, entityName, limit, offset, entityTable, where ]);
     } else {
       if (entities) {
         const entitiesArray = entities.split(',');
@@ -108,6 +119,23 @@ export class DB {
 
       return this.db.any('SELECT $1~.*, $5~.name FROM $1~ LEFT JOIN $5~ ON $1~.$2~ = $5~.id ORDER BY $2~ ASC LIMIT $3 OFFSET $4;', [ indicator, entityName, limit, offset, entityTable ]);
     }
+  }
+
+  formatFilters(filter: FilterOptions[][]): string {
+    return filter.reduce((prevOuter, currentOptions, index) => {
+      if (currentOptions.length > 1) {
+        const OR = currentOptions.reduce((prevInternal, option, _index) => {
+          const orInternal = PGPromise.as.format(`${option.field} ${option.operator} $1`, [ option.value ]);
+
+          return _index > 0 ? `${prevInternal} OR ${orInternal}` : orInternal;
+        }, '');
+
+        return index > 0 ? `${prevOuter} AND ${OR}` : `AND ${OR}`;
+      }
+      const AND = PGPromise.as.format(`${currentOptions[0].field} ${currentOptions[0].operator} $1`, [ currentOptions[0].value ]);
+
+      return index > 0 ? `${prevOuter} AND ${AND}` : `AND ${AND}`;
+    }, '');
   }
 
   allTablesInfo(): Promise<any> {
