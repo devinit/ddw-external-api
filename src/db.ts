@@ -35,6 +35,20 @@ const initOptions = {
   }
 };
 
+export const COMPARISON_OPERATORS = [
+  '>',
+  '<',
+  '=',
+  '<=',
+  '>=',
+  '!=',
+  '<>',
+  'LIKE',
+  'ILIKE',
+  'IS',
+  'IS NOT'
+];
+
 export class DB {
 
   /**
@@ -121,18 +135,32 @@ export class DB {
     }
   }
 
+  validOperator(operator: string): boolean {
+    return COMPARISON_OPERATORS.indexOf(operator) > -1;
+  }
+
   formatFilters(filter: FilterOptions[][]): string {
     return filter.reduce((prevOuter, currentOptions, index) => {
       if (currentOptions.length > 1) {
         const OR = currentOptions.reduce((prevInternal, option, _index) => {
-          const orInternal = PGPromise.as.format(`${option.field} ${option.operator} $1`, [ option.value ]);
+          if (!this.validOperator(option.operator)) {
+            throw new Error(`Invalid operator: ${option.operator}`);
+          }
+          const orInternal = option.value !== 'NULL'
+            ? PGPromise.as.format(`${option.field} ${option.operator} $1`, [ option.value ])
+            : `${option.field} ${option.operator} ${option.value}`;
 
           return _index > 0 ? `${prevInternal} OR ${orInternal}` : orInternal;
         }, '');
 
         return index > 0 ? `${prevOuter} AND ${OR}` : `AND ${OR}`;
       }
-      const AND = PGPromise.as.format(`${currentOptions[0].field} ${currentOptions[0].operator} $1`, [ currentOptions[0].value ]);
+      if (!this.validOperator(currentOptions[0].operator)) {
+        throw new Error(`Invalid operator: ${currentOptions[0].operator}`);
+      }
+      const AND = currentOptions[0].value !== 'NULL'
+        ? PGPromise.as.format(`${currentOptions[0].field} ${currentOptions[0].operator} $1`, [ currentOptions[0].value ])
+        : `${currentOptions[0].field} ${currentOptions[0].operator} ${currentOptions[0].value}`;
 
       return index > 0 ? `${prevOuter} AND ${AND}` : `AND ${AND}`;
     }, '');
@@ -169,10 +197,10 @@ export class DB {
     return csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(json);
   }
 
-  formatError(error: { code: string }, format = 'json'): string {
+  formatError(error: { code: string, message?: string }, format = 'json'): string {
     const data: { code: string, message: string } = {
       code: error.code,
-      message: 'Sorry, an unknown error occurred. Please send the error code above to info@devinit.org for assistance.'
+      message: error.message || 'Sorry, an unknown error occurred. Please send the error code above to info@devinit.org for assistance.'
     };
     // Known error codes
     if (error.code === '42P01') {
