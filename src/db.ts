@@ -153,7 +153,7 @@ export class DB {
           return _index > 0 ? `${prevInternal} OR ${orInternal}` : orInternal;
         }, '');
 
-        return index > 0 ? `${prevOuter} AND ${OR}` : `AND ${OR}`;
+        return index > 0 ? `${prevOuter} AND (${OR})` : `AND (${OR})`;
       }
       if (!this.validOperator(currentOptions[0].operator)) {
         throw new Error(`Invalid operator: ${currentOptions[0].operator}`);
