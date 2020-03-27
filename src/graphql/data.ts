@@ -10,6 +10,7 @@ interface CommonQueryOptions {
   endYear?: number;
   limit?: number;
   offset?: number;
+  filter?: dbH.FilterOptions[][];
 }
 
 export interface DataQueryOptions extends CommonQueryOptions {
@@ -21,7 +22,7 @@ export interface DataQueryArguments extends DataQueryOptions {
   page?: number;
 }
 
-type SingleIndicatorQueryOptions = CommonQueryOptions & { indicator: string, filter?: dbH.FilterOptions[][] };
+type SingleIndicatorQueryOptions = CommonQueryOptions & { indicator: string };
 type MultiIndicatorQueryOptions = CommonQueryOptions & { indicators: string[] };
 
 interface DataItem {
@@ -88,14 +89,14 @@ export const fetchData = async ({ indicators, geocodes, page, limit, ...options 
     limit: limit || defaultLimit,
     offset: page ? (page - 1) * (limit || defaultLimit) + 1 : undefined,
     startYear: options.startYear,
-    endYear: options.endYear
+    endYear: options.endYear,
+    filter: options.filter
   };
 
   if (indicators.length === 1) {
     const indicatorData = await fetchFromIndicator({
       indicator: indicators[0],
-      ...commonOptions,
-      filter: options.filter
+      ...commonOptions
     });
 
     return [ { indicator: indicators[0], data: indicatorData } ];
@@ -196,7 +197,7 @@ const groupMultiIndicatorData =
 };
 
 const fetchFromIndicators =
-  async ({ indicators, geocodes, startYear, endYear, limit, offset }: MultiIndicatorQueryOptions) => {
+  async ({ indicators, geocodes, startYear, endYear, limit, offset, filter }: MultiIndicatorQueryOptions) => {
     const validIndicators = indicators.filter((indicator) => forbiddenTables.indexOf(indicator) === -1);
     const entityArray = geocodes ? getEntitiesFromGeoCodes(geocodes) : [];
     const entities = entityArray.join(',');
@@ -208,7 +209,8 @@ const fetchFromIndicators =
       startYear,
       endYear,
       limit,
-      offset
+      offset,
+      filter
     });
 
     return groupMultiIndicatorData(data, indicators, geocodes || [], entityArray);
