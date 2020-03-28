@@ -126,6 +126,7 @@ export class DB {
       return this.db.any('SELECT $1~.*, $5~.name FROM $1~ LEFT JOIN $5~ ON $1~.$2~ = $5~.id $6:raw ORDER BY $2~ ASC, year ASC LIMIT $3 OFFSET $4;', [ indicator, entityName, limit, offset, entityTable, where ]);
     } else {
       const where = filter && filter.length && PGPromise.as.format('WHERE $1:raw', [ this.formatFilters(filter) ]);
+
       if (entities) {
         const entitiesArray = entities.split(',');
         const values = [ indicator, entityName, entitiesArray, limit, offset, entityTable ];
