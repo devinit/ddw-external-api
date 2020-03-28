@@ -116,7 +116,6 @@ export class DB {
       const where = filter && filter.length
         ? PGPromise.as.format('WHERE year >= $1 AND year <= $2 $3:raw', [ startYear, endYear, this.formatFilters(filter) ])
         : PGPromise.as.format('WHERE year >= $1 AND year <= $2', [ startYear, endYear ]);
-      console.log(where, filter);
 
       if (entities) {
         const entitiesArray = entities.split(',');
