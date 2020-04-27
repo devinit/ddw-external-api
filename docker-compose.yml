@@ -19,6 +19,7 @@ services:
       - VIRTUAL_HOST=api.devinit.org
     volumes:
       - ./config/nginx:/etc/nginx/conf.d
+      - ./letsencrypt:/letsencrypt
       - ./ssl:/etc/ssl/
     depends_on:
       - web
