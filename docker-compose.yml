@@ -10,3 +10,15 @@ services:
       - ".:/src"
     ports:
       - "8000:8000"
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - VIRTUAL_HOST=api.devinit.org
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./ssl:/etc/ssl/
+    depends_on:
+      - web
