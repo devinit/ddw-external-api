@@ -33,13 +33,13 @@ Usage Example: - /single_table?indicator=[Indicator ID Goes Here]&format=json
 |Population working|kenya_pop_working|2019|2019|
 |Population working female|kenya_pop_working_female|2019|2019|
 |Population working male|kenya_pop_working_male|2019|2019|
-|Households with access to improved sanitation facilities (%)|kenya_children_underweight|2019|2019|
-|Households with access to safe water (%)|kenya_children_wasting|2019|2019|
-|Households with access to improved sanitation facilities (%)|kenya_children_stunted|2019|2019|
-|Households with access to safe water (%)|kenya_children_breastfed|2019|2019|
-|Households with access to improved sanitation facilities (%)|kenya_births_notified|2019|2019|
-|Households with access to safe water (%)|kenya_births_notified_5_years|2019|2019|
-|Households with access to improved sanitation facilities (%)|kenya_births_attendance_5_years|2019|2019|
+|Proportion of Underweight Children (6-59 Months)  (%)|kenya_children_underweight|2019|2019|
+|Proportion of Wasted Children (6-59 Months)  (%)|kenya_children_wasting|2019|2019|
+|Proportion of Stunted Children (6-59 Months) (%)|kenya_children_stunted|2019|2019|
+|Proportion of Children (6-59 Months) ever breastfed (%)|kenya_children_breastfed|2019|2019|
+|Percentage of notified births in the last 12 months (%)|kenya_births_notified|2019|2019|
+|Percentage of notified births in the last 5 years (%)|kenya_births_notified_5_years|2019|2019|
+|Percentage of births in Health Facility in the last 5 yrs" (%)|kenya_births_attendance_5_years|2019|2019|
 
 
 ### Education
