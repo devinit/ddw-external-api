@@ -1,6 +1,6 @@
 # DDW API
 
-Base URL: - http://212.111.41.68:8000/
+Base URL: - https://api.devinit.org
 
 ### Endpoints
 - /all_tables
@@ -47,3 +47,22 @@ This section documents how to retrieve data from the API partaining to common Da
 - [Global Picture](docs/global-picture.md)
 - [Spotlight on Uganda](docs/spotlight-on-uganda.md)
 - [Spotlight on Kenya](docs/spotlight-on-kenya.md)
+
+## Certificates
+
+Certificates are renewed with a certbot.sh run on a Cronjob like so:
+```
+#!/bin/bash
+renewal_result="$(command certbot renew  --webroot -w /home/alex/ddw-external-api/letsencrypt)"
+#Check if successful result is received
+result="$(echo $renewal_result | grep -o Congratulations )"
+
+#If successful copy certs to the correct folder and refresh nginx docker node
+if [ $result ]; then
+        cd /home/alex/ddw-external-api/
+        cp -f  /etc/letsencrypt/live/api.devinit.org/privkey.pem /home/alex/ddw-external-api/ssl/
+        cp -f /etc/letsencrypt/live/api.devinit.org/fullchain.pem /home/alex/ddw-external-api/ssl/
+
+        command docker-compose restart nginx
+fi
+```
