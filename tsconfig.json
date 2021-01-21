@@ -4,7 +4,7 @@
     "module": "commonjs",
     "outDir": "dist",
     "resolveJsonModule": true,
-    "noEmitOnError": true,
+    "noEmitOnError": false,
     "declaration": false,
     "allowSyntheticDefaultImports": true,
     "removeComments": true,
@@ -12,9 +12,9 @@
     "watch": false,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "strict": true,
+    "strict": false,
     "strictFunctionTypes": false,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
@@ -26,6 +26,6 @@
     "src/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules/"
   ]
 }
