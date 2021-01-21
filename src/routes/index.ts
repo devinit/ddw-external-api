@@ -15,11 +15,11 @@ export class Routes {
 
     app.route('/single_table')
       .get((req: Request, res: Response) => {
-        if (forbiddenTables.indexOf(req.query.indicator) > -1) {
-          this.sendError(res, { code: '403' }, req.query.format);
+        if (forbiddenTables.indexOf(req.query.indicator as any) > -1) {
+          this.sendError(res, { code: '403' }, req.query.format as any);
         } else {
-          dbHandler = new dbH.DB(req.query.indicator);
-          dbHandler.getColumnNames(req.query.indicator)
+          dbHandler = new dbH.DB(req.query.indicator as any);
+          dbHandler.getColumnNames(req.query.indicator as any)
             .then((columnNames) => {
               const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset } = req.query;
               dbHandler.fetchData({
@@ -30,16 +30,16 @@ export class Routes {
                 endYear,
                 limit,
                 offset
-              })
+              } as any)
                 .then((data) => {
-                  this.sendData(res, data, req.query.format, req.query.indicator);
+                  this.sendData(res, data, req.query.format as any, req.query.indicator as any);
                 })
                 .catch((error) => {
-                  this.sendError(res, error, req.query.format);
+                  this.sendError(res, error, req.query.format as any);
                 });
             })
             .catch((error) => {
-              this.sendError(res, error, req.query.format);
+              this.sendError(res, error, req.query.format as any);
             });
         }
       });
@@ -47,9 +47,9 @@ export class Routes {
     app.route('/multi_table')
       .get((req: Request, res: Response) => {
         const { entities, start_year: startYear, end_year: endYear, limit, offset } = req.query;
-        const indicators: string[] = req.query.indicators.split(',');
+        const indicators: string[] = (req.query.indicators as any).split(',');
         const validIndicators = indicators.filter((indicator) => forbiddenTables.indexOf(indicator) === -1);
-        dbHandler = new dbH.DB(req.query.indicators);
+        dbHandler = new dbH.DB(req.query.indicators as any);
         dbHandler.getColumnNames(validIndicators[0])
           .then((columnNames) => {
             dbHandler.fetchData({
@@ -60,7 +60,7 @@ export class Routes {
               endYear,
               limit,
               offset
-            })
+            } as any)
             .then((data: any[]) => {
               let masterData: any[] = [];
               data.forEach((item, index) => {
@@ -74,12 +74,12 @@ export class Routes {
                 masterData = masterData.concat(matchingData);
               });
 
-              this.sendData(res, masterData, req.query.format, req.query.indicator);
+              this.sendData(res, masterData, req.query.format as any, req.query.indicator as any);
             }).catch((error) => {
-              this.sendError(res, error, req.query.format);
+              this.sendError(res, error, req.query.format as any);
             });
           }).catch((error) => {
-            this.sendError(res, error, req.query.format);
+            this.sendError(res, error, req.query.format as any);
           });
       });
 
@@ -88,9 +88,9 @@ export class Routes {
         dbHandler = new dbH.DB('all');
         dbHandler.allTablesInfo()
           .then((data) => {
-            this.sendData(res, data, req.query.format);
+            this.sendData(res, data, req.query.format as any);
           }).catch((error) => {
-            this.sendError(res, error, req.query.format);
+            this.sendError(res, error, req.query.format as any);
           });
       });
 
@@ -99,9 +99,9 @@ export class Routes {
         dbHandler = new dbH.DB('all');
         dbHandler.fetchMetaData()
           .then((data) => {
-            this.sendData(res, data, req.query.format);
+            this.sendData(res, data, req.query.format as any);
           }).catch((error) => {
-            this.sendError(res, error, req.query.format);
+            this.sendError(res, error, req.query.format as any);
           });
       });
   }
