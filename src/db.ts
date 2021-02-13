@@ -23,12 +23,12 @@ interface FetchOptions {
 
 const initOptions = {
   schema(dc: any) {
-    if ((dc as string).includes('kenya')) {
+    if (dc === null || dc === undefined) {
+      return dc;
+    } else if ((dc as string).includes('kenya')) {
       return 'spotlight_on_kenya_2017';
     } else if ((dc as string).includes('uganda')) {
       return 'spotlight_on_uganda_2017';
-    } else if (dc === null) {
-        return dc;
     } else {
       return [ 'spotlight_on_uganda_2017', 'spotlight_on_kenya_2017', 'data_series', 'reference', 'fact', 'dimension', 'donor_profile', 'recipient_profile', 'multilateral_profile', 'south_south_cooperation' ];
     }
@@ -63,21 +63,24 @@ export class DB {
   db: IDatabase<any>;
 
   constructor(schemas: string | null) {
-    if (schemas === null) {
-        this.db = this.pgPromise(this.configs, schemas);
+    if (schemas === null || schemas === undefined) {
+      if (DB.dbs.get('undefined') === undefined) {
+        DB.dbs.set('undefined', this.pgPromise(this.configs, schemas));
+      }
+      this.db = DB.dbs.get('undefined');
     } else if (DB.dbs.get(schemas) === undefined) {
-        DB.dbs.set(schemas, this.pgPromise(this.configs, schemas));
-        this.db = DB.dbs.get(schemas);
+      DB.dbs.set(schemas, this.pgPromise(this.configs, schemas));
+      this.db = DB.dbs.get(schemas);
     } else {
-        this.db = DB.dbs.get(schemas);
+      this.db = DB.dbs.get(schemas);
     }
   }
 
   getColumnNames(indicator: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
       this.db.any('SELECT * FROM $1~ LIMIT 1;', indicator)
-      .then(data => resolve(data.length ? Object.keys(data[0]) : []))
-      .catch(reject);
+        .then(data => resolve(data.length ? Object.keys(data[0]) : []))
+        .catch(reject);
     });
   }
 
@@ -198,7 +201,7 @@ export class DB {
     const keys = Object.keys(Array.isArray(json) ? json[0] : json);
     const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
     const csvStringifier = createCsvStringifier({
-        header: keys.map(key => ({ id: key, title: key }))
+      header: keys.map(key => ({ id: key, title: key }))
     });
 
     return csvStringifier.getHeaderString() + csvStringifier.stringifyRecords(json);
