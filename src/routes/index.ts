@@ -2,7 +2,6 @@ import { Application, Request, Response } from 'express';
 import * as dbH from '../db';
 import { join } from 'path';
 import { forbiddenTables } from '../utils';
-import { NextFunction } from 'connect';
 
 let dbHandler: dbH.DB;
 
