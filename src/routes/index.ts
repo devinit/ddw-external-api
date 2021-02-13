@@ -2,6 +2,7 @@ import { Application, Request, Response } from 'express';
 import * as dbH from '../db';
 import { join } from 'path';
 import { forbiddenTables } from '../utils';
+import { NextFunction } from 'connect';
 
 let dbHandler: dbH.DB;
 
@@ -15,94 +16,111 @@ export class Routes {
 
     app.route('/single_table')
       .get((req: Request, res: Response) => {
-        if (forbiddenTables.indexOf(req.query.indicator as any) > -1) {
-          this.sendError(res, { code: '403' }, req.query.format as any);
-        } else {
-          dbHandler = new dbH.DB(req.query.indicator as any);
-          dbHandler.getColumnNames(req.query.indicator as any)
+        try {
+          if (forbiddenTables.indexOf(req.query.indicator as any) > -1) {
+            this.sendError(res, { code: '403' }, req.query.format as any);
+          } else {
+            dbHandler = new dbH.DB(req.query.indicator as any);
+            dbHandler.getColumnNames(req.query.indicator as any)
+              .then((columnNames) => {
+                const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset } = req.query;
+                dbHandler.fetchData({
+                  columnNames,
+                  indicator,
+                  entities,
+                  startYear,
+                  endYear,
+                  limit,
+                  offset
+                } as any)
+                  .then((data) => {
+                    this.sendData(res, data, req.query.format as any, req.query.indicator as any);
+                  })
+                  .catch((error) => {
+                    this.sendError(res, error, req.query.format as any);
+                  });
+              })
+              .catch((error) => {
+                this.sendError(res, error, req.query.format as any);
+              });
+          }
+        } catch (error) {
+          this.sendError(res, error, req.query.format as any);
+        }
+
+      });
+
+    app.route('/multi_table')
+      .get((req: Request, res: Response) => {
+        try {
+          const { entities, start_year: startYear, end_year: endYear, limit, offset } = req.query;
+          const indicators: string[] = (req.query.indicators as any).split(',');
+          const validIndicators = indicators.filter((indicator) => forbiddenTables.indexOf(indicator) === -1);
+          dbHandler = new dbH.DB(req.query.indicators as any);
+          dbHandler.getColumnNames(validIndicators[0])
             .then((columnNames) => {
-              const { entities, indicator, start_year: startYear, end_year: endYear, limit, offset } = req.query;
               dbHandler.fetchData({
                 columnNames,
-                indicator,
+                indicator: validIndicators,
                 entities,
                 startYear,
                 endYear,
                 limit,
                 offset
               } as any)
-                .then((data) => {
-                  this.sendData(res, data, req.query.format as any, req.query.indicator as any);
-                })
-                .catch((error) => {
-                  this.sendError(res, error, req.query.format as any);
-                });
-            })
-            .catch((error) => {
-              this.sendError(res, error, req.query.format as any);
-            });
-        }
-      });
+              .then((data: any[]) => {
+                let masterData: any[] = [];
+                data.forEach((item, index) => {
+                  const matchingIndicator = validIndicators[index];
+                  const matchingData = item.map((el: any) => {
+                    const o = { ...el };
+                    o.indicator = matchingIndicator;
 
-    app.route('/multi_table')
-      .get((req: Request, res: Response) => {
-        const { entities, start_year: startYear, end_year: endYear, limit, offset } = req.query;
-        const indicators: string[] = (req.query.indicators as any).split(',');
-        const validIndicators = indicators.filter((indicator) => forbiddenTables.indexOf(indicator) === -1);
-        dbHandler = new dbH.DB(req.query.indicators as any);
-        dbHandler.getColumnNames(validIndicators[0])
-          .then((columnNames) => {
-            dbHandler.fetchData({
-              columnNames,
-              indicator: validIndicators,
-              entities,
-              startYear,
-              endYear,
-              limit,
-              offset
-            } as any)
-            .then((data: any[]) => {
-              let masterData: any[] = [];
-              data.forEach((item, index) => {
-                const matchingIndicator = validIndicators[index];
-                const matchingData = item.map((el: any) => {
-                  const o = { ...el };
-                  o.indicator = matchingIndicator;
-
-                  return o;
+                    return o;
+                  });
+                  masterData = masterData.concat(matchingData);
                 });
-                masterData = masterData.concat(matchingData);
+
+                this.sendData(res, masterData, req.query.format as any, req.query.indicator as any);
+              }).catch((error) => {
+                this.sendError(res, error, req.query.format as any);
               });
-
-              this.sendData(res, masterData, req.query.format as any, req.query.indicator as any);
             }).catch((error) => {
               this.sendError(res, error, req.query.format as any);
             });
-          }).catch((error) => {
-            this.sendError(res, error, req.query.format as any);
-          });
+        } catch (error) {
+          this.sendError(res, error, req.query.format as any);
+        }
       });
 
     app.route('/all_tables')
       .get((req: Request, res: Response) => {
-        dbHandler = new dbH.DB('all');
-        dbHandler.allTablesInfo()
-          .then((data) => {
-            this.sendData(res, data, req.query.format as any);
-          }).catch((error) => {
-            this.sendError(res, error, req.query.format as any);
-          });
+        try {
+          dbHandler = new dbH.DB('all');
+          dbHandler.allTablesInfo()
+            .then((data) => {
+              this.sendData(res, data, req.query.format as any);
+            }).catch((error) => {
+              this.sendError(res, error, req.query.format as any);
+            });
+        } catch (error) {
+          this.sendError(res, error, req.query.format as any);
+        }
       });
 
     app.route('/meta_data')
       .get((req: Request, res: Response) => {
-        dbHandler = new dbH.DB('all');
-        dbHandler.fetchMetaData()
-          .then((data) => {
-            this.sendData(res, data, req.query.format as any);
-          }).catch((error) => {
-            this.sendError(res, error, req.query.format as any);
-          });
+        try {
+          dbHandler = new dbH.DB('all');
+          dbHandler.fetchMetaData()
+            .then((data) => {
+              this.sendData(res, data, req.query.format as any);
+            }).catch((error) => {
+              this.sendError(res, error, req.query.format as any);
+            });
+        } catch (error) {
+          this.sendError(res, error, req.query.format as any);
+        }
       });
   }
 
