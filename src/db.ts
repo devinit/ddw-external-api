@@ -23,7 +23,7 @@ interface FetchOptions {
 
 const initOptions = {
   schema(dc: any) {
-    if (dc === null || dc === undefined) {
+    if (!dc) {
       return dc;
     } else if ((dc as string).includes('kenya')) {
       return 'spotlight_on_kenya_2017';
@@ -63,7 +63,7 @@ export class DB {
   db: IDatabase<any>;
 
   constructor(schemas: string | null) {
-    if (schemas === null || schemas === undefined) {
+    if (!schemas) {
       if (DB.dbs.get('undefined') === undefined) {
         DB.dbs.set('undefined', this.pgPromise(this.configs, schemas));
       }
