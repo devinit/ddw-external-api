@@ -6,6 +6,7 @@ import { forbiddenTables } from '../utils';
 let dbHandler: dbH.DB;
 
 type ResponseFormat = 'json' | 'csv' | 'xml';
+const SERVER_ERROR_MESSAGE = 'A server error has occured. Please contact your system administrator';
 export class Routes {
   init(app: Application): void {
     app.route('/')
@@ -44,7 +45,9 @@ export class Routes {
               });
           }
         } catch (error) {
-          this.sendError(res, error, req.query.format as any);
+          console.log(error.message);
+
+          this.sendError(res, { code: `500`, message: SERVER_ERROR_MESSAGE }, req.query.format as any);
         }
 
       });
@@ -88,7 +91,9 @@ export class Routes {
               this.sendError(res, error, req.query.format as any);
             });
         } catch (error) {
-          this.sendError(res, error, req.query.format as any);
+          console.log(error.message);
+
+          this.sendError(res, { code: `500`, message: SERVER_ERROR_MESSAGE }, req.query.format as any);
         }
       });
 
@@ -103,7 +108,9 @@ export class Routes {
               this.sendError(res, error, req.query.format as any);
             });
         } catch (error) {
-          this.sendError(res, error, req.query.format as any);
+          console.log(error.message);
+
+          this.sendError(res, { code: `500`, message: SERVER_ERROR_MESSAGE }, req.query.format as any);
         }
       });
 
@@ -118,7 +125,9 @@ export class Routes {
               this.sendError(res, error, req.query.format as any);
             });
         } catch (error) {
-          this.sendError(res, error, req.query.format as any);
+          console.log(error.message);
+
+          this.sendError(res, { code: `500`, message: SERVER_ERROR_MESSAGE }, req.query.format as any);
         }
       });
   }
@@ -131,7 +140,7 @@ export class Routes {
     res.status(200).send(dbHandler.formatData(data, format));
   }
 
-  sendError(res: Response, error: { code: string }, format?: ResponseFormat): void {
+  sendError(res: Response, error: { code: string, message?: string }, format?: ResponseFormat): void {
     const fileExtension = format ? format : 'json';
     res.setHeader('Content-disposition', 'inline; filename=error.' + fileExtension);
     res.setHeader('Content-Type', 'application/' + fileExtension);
