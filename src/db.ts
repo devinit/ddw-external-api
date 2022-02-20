@@ -78,7 +78,8 @@ function getTableNameFromIndicator(indicator) {
     if (tableName) { return key; }
   }
 
-  return tableName;
+  // Return indicator as was provided i.e it was not changed in new tables
+  return indicator;
 }
 
 export const COMPARISON_OPERATORS = [
