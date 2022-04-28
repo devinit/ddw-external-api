@@ -45,8 +45,6 @@ export class Routes {
               });
           }
         } catch (error) {
-          console.log(error.message);
-
           this.sendError(res, { code: `500`, message: SERVER_ERROR_MESSAGE }, req.query.format as any);
         }
 
@@ -91,8 +89,6 @@ export class Routes {
               this.sendError(res, error, req.query.format as any);
             });
         } catch (error) {
-          console.log(error.message);
-
           this.sendError(res, { code: `500`, message: SERVER_ERROR_MESSAGE }, req.query.format as any);
         }
       });
@@ -108,8 +104,6 @@ export class Routes {
               this.sendError(res, error, req.query.format as any);
             });
         } catch (error) {
-          console.log(error.message);
-
           this.sendError(res, { code: `500`, message: SERVER_ERROR_MESSAGE }, req.query.format as any);
         }
       });
@@ -125,8 +119,6 @@ export class Routes {
               this.sendError(res, error, req.query.format as any);
             });
         } catch (error) {
-          console.log(error.message);
-
           this.sendError(res, { code: `500`, message: SERVER_ERROR_MESSAGE }, req.query.format as any);
         }
       });

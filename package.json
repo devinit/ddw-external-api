@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "grunt": "grunt",
-    "dev": "npm i && npm run grunt && ts-node-dev --compilerOptions '{ \"strict\": false }' ./src/server.ts",
+    "dev": "npm i && npm run grunt && ts-node-dev ./src/server.ts",
     "start": "node ./dist/server.js",
     "prod": "npm run grunt && npm run build && npm run start",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
